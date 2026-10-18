@@ -1,0 +1,286 @@
+{
+  "ticker": "ARTY",
+  "fund_name": "iShares Future AI & Tech ETF",
+  "issuer": "iShares (BlackRock)",
+  "index_tracked": "Morningstar Global Artificial Intelligence Select Index (Net). Fund was formerly ticker IRBO; it switched to this index on 2024-08-12 (previously NYSE FactSet Global Robotics and Artificial Intelligence Index). Inception 2018-06-26. No other name/strategy change shown on the iShares product page.",
+  "expense_ratio": {
+    "value": 0.47,
+    "unit": "%",
+    "source": "https://ishares.com/us/products/297905/ishares-future-ai-tech-etf (also fact sheet PDF and stockanalysis.com)",
+    "retrieved_at": "2026-10-18T20:27:14Z"
+  },
+  "last_trading_date": "2026-10-16",
+  "current_price": {
+    "value": 69.58,
+    "basis": "official close",
+    "date": "2026-10-16",
+    "source": "mcp__robinhood__get_equity_historicals (ARTY, interval=day, bounds=regular, adjustment_type=split); corroborated by https://stockanalysis.com/etf/arty/ (69.58 at 4:00 PM EDT)",
+    "retrieved_at": "2026-10-18T20:21:40Z"
+  },
+  "high_52w_intraday": {
+    "value": 81.97,
+    "date": "2026-10-06",
+    "source": "mcp__robinhood__get_equity_historicals (ARTY, interval=day, bounds=regular, adjustment_type=split); matches mcp__robinhood__get_equity_fundamentals high_52_weeks=81.97 (2026-10-06)",
+    "retrieved_at": "2026-10-18T20:21:40Z"
+  },
+  "high_52w_close": {
+    "value": 81.24,
+    "date": "2026-10-06"
+  },
+  "low_52w_intraday": {
+    "value": 43.2611,
+    "date": "2025-11-21"
+  },
+  "drop_pct_from_intraday_high": -15.12,
+  "drop_pct_from_closing_high": -14.35,
+  "drop_dollars": -12.39,
+  "trading_days_since_high": 8,
+  "returns_pct": {
+    "1m": -7.34,
+    "3m": 5.97,
+    "ytd": 44.42,
+    "1y": 43.94,
+    "note": "Price return, close-to-close, excludes distributions. 1m = 21 trading days (ref 2026-09-17), 3m = 63 trading days (ref 2026-07-20), YTD vs 2025-12-31 close 48.18, 1y vs 2025-10-16 close 48.34."
+  },
+  "cross_check": {
+    "source": "mcp__robinhood__get_equity_fundamentals + mcp__robinhood__get_equity_quotes; https://stockanalysis.com/etf/arty/; iShares product page NAV",
+    "retrieved_at": "Robinhood 2026-10-18T20:21:40Z; stockanalysis 2026-10-18T20:31:33Z; iShares 2026-10-18T20:27:14Z",
+    "price": 69.58,
+    "high_52w": 81.97,
+    "note": "All sources agree within 0.5%. Robinhood fundamentals high_52_weeks 81.97 (2026-10-06) and low 43.2611 (2025-11-21) match the calc exactly (0.000%). stockanalysis.com close 69.58 and 52w range 43.26-81.97 match. Robinhood quote last_trade_price 69.68 (last regular-session print 19:59:48Z) is +0.144% vs the 69.58 closing print; Robinhood's official-close field still showed 2026-10-15 (72.86). iShares NAV 69.5652 on 10/16 -> close at +0.021% premium. iShares NAV-based 52w high 81.26 vs closing high 81.24 (+0.025%). AlphaVantage could not be used (see data_gaps)."
+  },
+  "top_holdings": [
+    {
+      "name": "Advanced Micro Devices",
+      "symbol": "AMD",
+      "weight_pct": 5.55
+    },
+    {
+      "name": "Marvell Technology",
+      "symbol": "MRVL",
+      "weight_pct": 5.07
+    },
+    {
+      "name": "NVIDIA",
+      "symbol": "NVDA",
+      "weight_pct": 4.59
+    },
+    {
+      "name": "Taiwan Semiconductor Manufacturing",
+      "symbol": "2330 (TW)",
+      "weight_pct": 4.59
+    },
+    {
+      "name": "Broadcom",
+      "symbol": "AVGO",
+      "weight_pct": 4.57
+    },
+    {
+      "name": "Micron Technology",
+      "symbol": "MU",
+      "weight_pct": 4.33
+    },
+    {
+      "name": "Oracle",
+      "symbol": "ORCL",
+      "weight_pct": 3.98
+    },
+    {
+      "name": "Global Unichip",
+      "symbol": "3443 (TW)",
+      "weight_pct": 3.9
+    },
+    {
+      "name": "CoreWeave Class A",
+      "symbol": "CRWV",
+      "weight_pct": 3.66
+    },
+    {
+      "name": "Super Micro Computer",
+      "symbol": "SMCI",
+      "weight_pct": 3.23
+    },
+    {
+      "name": "Naver",
+      "symbol": "035420 (KR)",
+      "weight_pct": 3.12
+    },
+    {
+      "name": "Palantir Technologies Class A",
+      "symbol": "PLTR",
+      "weight_pct": 3.11
+    },
+    {
+      "name": "Microsoft",
+      "symbol": "MSFT",
+      "weight_pct": 3.01
+    },
+    {
+      "name": "Space Exploration Technologies",
+      "symbol": "SPCX",
+      "weight_pct": 2.72
+    },
+    {
+      "name": "International Business Machines",
+      "symbol": "IBM",
+      "weight_pct": 2.7
+    }
+  ],
+  "holdings_source": "https://www.ishares.com/us/products/297905/ishares-future-ai-tech-etf/latest-holdings.csv (via WebFetch, retrieved 2026-10-18T20:27:43Z). Top-10 = 43.47%, top-15 = 58.13% (calc). Fact sheet 6/30/2026 for sector/country: IT 87.70%, US 66.32%, Taiwan 16.58%, Korea 6.53%.",
+  "holdings_as_of": "2026-10-15",
+  "drop_summary": "ARTY closed at $69.58 on Fri 2026-10-16, 15.12% below its 2026-10-06 intraday high of $81.97 (14.35% below the $81.24 closing high), giving back that much in only 8 trading sessions. The drop tracks a broad AI-semiconductor rout (SOXX fell 16.30% over the same span vs QQQ -6.56%): doubts about AI monetization (a report that OpenAI's revenue run rate was ~$50B, not ~$70B, and Broadcom's CEO likening AI investing to a casino), credit stress at AI-infrastructure borrowers led by CoreWeave, a hotter-than-expected core CPI print that added to Fed-hike bets, and Chinese memory competition. The fund is still up 44.42% YTD on price; the move is a sharp pullback from a fresh high, not a long bear trend.",
+  "drivers": [
+    {
+      "driver": "OpenAI revenue shortfall report",
+      "detail": "Financial Times reported OpenAI's annualized revenue near $50B at end-September vs the ~$70B figure previously circulated; Nvidia fell 2.9%, Oracle nearly 6%, SpaceX 4%. ARTY fell 2.80% on 10/08 (calc).",
+      "date": "2026-10-08",
+      "source_title": "OpenAI revenue gap report rattles AI stocks (Vermoegenszentrum, 9 Oct 2026)",
+      "url": "https://www.vermoegenszentrum.ch/en/stock-exchange-and-markets/news/openai-revenue-gap-report-rattles-ai-stocks"
+    },
+    {
+      "driver": "Broadcom CEO 'casino' remarks",
+      "detail": "At a DBS conference in Singapore, Hock Tan said many AI investors don't understand what they own, compared the market to a casino, and flagged capital as AI's biggest constraint, while still seeing demand exceeding supply to ~2029-2030. ARTY fell 2.19% on 10/12 (calc).",
+      "date": "2026-10-12",
+      "source_title": "Broadcom CEO Hock Tan likens many AI investors to casino gamblers (The Next Web)",
+      "url": "https://thenextweb.com/news/broadcom-hock-tan-ai-investors-casino-capital"
+    },
+    {
+      "driver": "Chinese memory competition (CXMT) hits memory names",
+      "detail": "CXMT reported progress on a denser 4F2 DRAM design; KOSPI fell nearly 5% on 10/13 with Samsung and SK Hynix each down ~5%, and Micron fell 3.9% in the prior US session. Micron (4.33% weight) fell 15.95% from 10/06 to 10/16 (calc).",
+      "date": "2026-10-13",
+      "source_title": "KOSPI Drops 5% as China's CXMT Chip Advance Hits Samsung and SK Hynix (Mitrade)",
+      "url": "https://www.mitrade.com/au/insights/news/live-news/article-3-2157299-20261013"
+    },
+    {
+      "driver": "Hot core CPI print",
+      "detail": "September core CPI rose 0.3% m/m vs 0.2% expected (2.6% y/y vs 2.5%); S&P 500 IT sector fell 3.00%, Nasdaq -1.88%, and Barclays downgraded Dell/HPE/NetApp on AI-valuation grounds. ARTY fell 4.82% on 10/14, its worst day of the drop (calc).",
+      "date": "2026-10-14",
+      "source_title": "Stock Market Today (Oct. 14, 2026) - TheStreet",
+      "url": "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-oct-14-2026"
+    },
+    {
+      "driver": "CoreWeave credit stress / AI-infrastructure financing fears",
+      "detail": "CoreWeave shares fell ~15% on 10/14 and hit the lowest since May 2025 on 10/15; some bonds yielded >15% and CDS spreads topped 1,000bp. Oracle fell ~10% on 10/14, Nebius and Iren >10%. CRWV (3.66% weight) fell 33.07% from 10/06 to 10/16, the single largest approximate drag on ARTY (-1.21 pts, calc).",
+      "date": "2026-10-15",
+      "source_title": "CoreWeave shares plunge to lowest since May 2025 as credit fears mount (ROIC.ai)",
+      "url": "https://www.roic.ai/news/coreweave-shares-plunge-to-lowest-since-may-2025-as-credit-fears-mount-10-15-2026"
+    },
+    {
+      "driver": "TSMC beat but margin outlook disappointed",
+      "detail": "TSMC Q3 net profit rose ~69% and it raised 2026 USD revenue growth guidance to ~44%, but guided Q4 gross margin to 65-67% (Q3 ~66%) and its US-listed shares slipped. TSM ADR fell 14.45% from 10/06 to 10/16 (calc).",
+      "date": "2026-10-15",
+      "source_title": "ICYMI: TSMC profit jumps nearly 70% on AI demand, but margin outlook weighs on shares (InvestingLive)",
+      "url": "https://investinglive.com/stocks/icymi-tsmc-profit-jumps-nearly-70-on-ai-demand-but-margin-outlook-weighs-on-shares/"
+    },
+    {
+      "driver": "Friday chip rout resumes, rate-hike odds climb",
+      "detail": "Nasdaq -2.15%, SOXX -4.14%, AMD -5.96%, Micron -5.63%, Broadcom -4.53%; VIX +22.5% to 20.16; CME odds of a December hike cited at 74.3% (from 50.2% a month earlier); Brent +3.7% to $109.86. Nasdaq's worst week since June. ARTY -4.50% on 10/16 (calc).",
+      "date": "2026-10-16",
+      "source_title": "Nasdaq drops 2.1% as chip rout caps a 4.5% weekly slide (TS2)",
+      "url": "https://ts2.tech/en/nasdaq-drops-2-1-as-chip-rout-caps-a-4-5-weekly-slide/"
+    },
+    {
+      "driver": "Tightening Fed backdrop",
+      "detail": "The Fed raised rates 25bp on 2026-09-16 to 3.75-4.00% (first hike since 2023) and the median dot (4.125%) implies further tightening, raising the discount rate on long-duration AI growth stocks.",
+      "date": "2026-09-16",
+      "source_title": "September 2026 FOMC recap (MUFG Research)",
+      "url": "https://www.mufgresearch.com/articles/september-2026-fomc-recap"
+    }
+  ],
+  "bull_case": [
+    {
+      "point": "Core AI demand still growing fast",
+      "evidence": "TSMC (4.59% weight) reported Q3 revenue +50.9% y/y and net profit +68.7% y/y with a 66.4% gross margin; it also raised its 2026 USD growth outlook to ~44% from ~40% (per InvestingLive, 15 Oct 2026).",
+      "source_title": "TSMC Q3 (July-Sep) profit jumps 68.7% to USD 23.9 billion, revenue rises 50.9% (Times of Oman, 15 Oct 2026)",
+      "url": "https://timesofoman.com/article/178032-tsmc-q3-july-sep-profit-jumps-687-to-usd-239-billion-revenue-rises-509"
+    },
+    {
+      "point": "Supply-constrained outlook from a top holding",
+      "evidence": "Broadcom's CEO forecast AI chip revenue rising from ~$58B this fiscal year to $230B in FY2028, and said compute demand exceeds supply possibly through 2029-2030.",
+      "source_title": "Broadcom CEO likens AI boom to a casino even as he targets $230 billion in chip sales (InvestingLive)",
+      "url": "https://investinglive.com/stocks/broadcom-ceo-likens-ai-boom-to-a-casino-even-as-he-targets-230-billion-in-chip-sales/"
+    },
+    {
+      "point": "Valuation has de-rated meaningfully",
+      "evidence": "Fund P/E fell from 41.87x (fact sheet, 2026-06-30) to 31.85x (iShares page, 2026-10-15), a 23.93% compression (calc), as earnings grew and prices pulled back.",
+      "source_title": "iShares ARTY fact sheet and product page",
+      "url": "https://ishares.com/us/products/297905/ishares-future-ai-tech-etf"
+    },
+    {
+      "point": "Has recovered from a deeper drawdown this year",
+      "evidence": "Within the 52-week window ARTY fell 24.05% on a closing basis (2026-06-02 to 2026-07-29) and went on to set new highs by 2026-10-06 (calc on Robinhood daily bars); the current pullback (-14.35%) is smaller so far.",
+      "source_title": "Robinhood daily historicals (ARTY)",
+      "url": "mcp__robinhood__get_equity_historicals"
+    },
+    {
+      "point": "Efficient, liquid wrapper with tight NAV tracking",
+      "evidence": "$3.71B net assets, 0.47% expense ratio, close at +0.021% premium to NAV on 10/16 (calc); 1y NAV return 85.56% vs benchmark 85.40% as of 6/30.",
+      "source_title": "iShares product page and fact sheet",
+      "url": "https://ishares.com/us/literature/fact-sheet/arty-ishares-future-ai-tech-etf-fund-fact-sheet-en-us.pdf"
+    }
+  ],
+  "bear_case": [
+    {
+      "point": "Concentrated in semiconductors and highly correlated with chip cycles",
+      "evidence": "87.70% Information Technology (6/30 fact sheet); top-10 = 43.47% of assets (10/15, calc). From the high, ARTY fell 14.35% vs SOXX -16.30% and QQQ -6.56% (calc), so it behaves like a chip fund.",
+      "source_title": "iShares ARTY fact sheet; iShares holdings CSV",
+      "url": "https://ishares.com/us/literature/fact-sheet/arty-ishares-future-ai-tech-etf-fund-fact-sheet-en-us.pdf"
+    },
+    {
+      "point": "AI-infrastructure financing is showing strain",
+      "evidence": "CoreWeave spent $6.42B on property/equipment in Q2 vs $679M operating cash flow, carries ~$35.1B debt, and has bonds yielding >15%; CoreWeave and Oracle together are 7.64% of ARTY.",
+      "source_title": "CoreWeave shares plunge to lowest since May 2025 as credit fears mount (ROIC.ai)",
+      "url": "https://www.roic.ai/news/coreweave-shares-plunge-to-lowest-since-may-2025-as-credit-fears-mount-10-15-2026"
+    },
+    {
+      "point": "Monetization of AI spend is being questioned",
+      "evidence": "OpenAI's run-rate revenue reportedly near $50B vs ~$70B expected; Broadcom's CEO said most companies haven't found AI uses that pay off.",
+      "source_title": "OpenAI revenue gap report rattles AI stocks (Vermoegenszentrum)",
+      "url": "https://www.vermoegenszentrum.ch/en/stock-exchange-and-markets/news/openai-revenue-gap-report-rattles-ai-stocks"
+    },
+    {
+      "point": "Rising-rate regime pressures long-duration growth multiples",
+      "evidence": "Fed hiked to 3.75-4.00% on 2026-09-16 with dots implying more; core CPI beat on 10/14; December hike odds cited at 74.3% on 10/16.",
+      "source_title": "MUFG September 2026 FOMC recap; TS2 market wrap 10/16",
+      "url": "https://www.mufgresearch.com/articles/september-2026-fomc-recap"
+    },
+    {
+      "point": "Memory competition and sentiment fatigue",
+      "evidence": "CXMT's DRAM progress hit Samsung/SK Hynix ~5% on 10/13; 22 of 30 SOX members were >20% below their May/June highs as of 10/13 even before the latest leg down.",
+      "source_title": "AI fatigue drives chip stocks to their longest losing streak since May 2025 (Crypto Briefing)",
+      "url": "https://cryptobriefing.com/ai-fatigue-chip-stocks-losing-streak/"
+    }
+  ],
+  "holding_attribution_10_06_to_10_16": {
+    "method": "weight (as of 10/15) x price move from 10/06 close to 10/16 close; Robinhood daily bars retrieved 2026-10-18T20:30:47Z; TSM ADR used as proxy for 2330",
+    "largest_drags_pts": {
+      "CRWV": -1.21,
+      "MRVL": -1.05,
+      "AMD": -1.03,
+      "SMCI": -0.88,
+      "MU": -0.69,
+      "TSM": -0.66
+    },
+    "listed_names_weight_pct": 51.11,
+    "listed_names_approx_contribution_pts": -7.41,
+    "benchmarks_pct": {
+      "SOXX": -16.3,
+      "QQQ": -6.56
+    }
+  },
+  "data_gaps": [
+    "AlphaVantage unavailable: TIME_SERIES_DAILY outputsize=full returned 'premium feature'; subsequent calls (GLOBAL_QUOTE, TIME_SERIES_WEEKLY, ETF_PROFILE) hit the free key's 25/day limit (shared across workers). Primary daily series is therefore Robinhood get_equity_historicals (split-adjusted, regular session), 2025-09-02 to 2026-10-16, 284 bars, no OHLC violations, no split detected.",
+    "AlphaVantage NEWS_SENTIMENT not used (quota). News drivers come from WebSearch/WebFetch.",
+    "Robinhood get_equity_quotes official-close field returned 2026-10-15 (72.86), not 2026-10-16; the 10/16 close of 69.58 is from the Robinhood daily bar and is corroborated by stockanalysis.com and the iShares NAV (69.5652).",
+    "iShares holdings CSV could not be downloaded directly (proxy 403 on www.ishares.com); top-15 weights were extracted through WebFetch's summarizer, not parsed line by line.",
+    "Holdings count disagrees: 50 (iShares page, 10/15), 49 (fact sheet, 6/30), 78 (stockanalysis.com, likely counts cash/FX lines).",
+    "Attribution covers 13 of the top 15 names (51.11% of assets); Global Unichip (3443 TW) and Naver (035420 KR) price moves not retrieved. TSMC move uses the US ADR as a proxy for the Taiwan line. Weights are 10/15 values applied to a 10/06-10/16 window, so contributions are approximate.",
+    "AUM disagrees >0.5% across sources: iShares $3.711B (10/16) vs Robinhood market_cap $3.754B (+1.15%) vs stockanalysis $3.88B (+4.55%); shares outstanding iShares 53.35M vs Robinhood 53.875M (+0.98%). iShares treated as authoritative.",
+    "P/E differs by source: iShares 31.85 (10/15) vs Robinhood pe_ratio 33.18.",
+    "Treasury-yield levels conflict across articles (10y quoted at 5.09%, 5.19% and 5.278% around 10/14-10/16); exact yields not used.",
+    "Hock Tan remark date: The Next Web says Monday 2026-10-12 (Singapore); a Crypto Briefing piece dates it 10/08. The Next Web date is used.",
+    "Fund flow (creation/redemption) data for the drop window not found.",
+    "Returns are price-only and exclude distributions; iShares-published total returns use different end dates (YTD NAV TR 51.37% to 10/15 vs calc YTD price return 51.22% to 10/15)."
+  ],
+  "calc_output": "rows loaded: 284  first=2025-09-02  last=2026-10-16\nOHLC consistency violations: 0\nclose-to-close moves >40% (possible split): none\nlargest calendar gap between bars: 4 days\n\nlast_trading_date: 2026-10-16\n52w window: 2025-10-16 .. 2026-10-16 inclusive  (252 trading days)\n\ncurrent (last close):        69.5800  on 2026-10-16\nhigh_52w_intraday:           81.9700  on 2026-10-06\nhigh_52w_close:              81.2400  on 2026-10-06\nlow_52w_intraday:            43.2611  on 2025-11-21\nlow_52w_close:               44.2000  on 2026-03-30\ndrop_pct_from_intraday_high: -15.12%\ndrop_pct_from_closing_high:  -14.35%\ndrop_dollars (vs intraday):  -12.39\ndrop_dollars (vs close hi):  -11.66\ntrading_days_since_intraday_high: 8\ntrading_days_since_closing_high:  8\ngain from 52w intraday low to current: 60.84%\n\nreturns (price return, close-to-close, excludes distributions):\n   1m (21 trading days back, ref 2026-09-17 close 75.09): -7.34%\n   3m (63 trading days back, ref 2026-07-20 close 65.66): 5.97%\n  ytd (ref 2025-12-31 close 48.18): 44.42%\n  1y  (ref 2025-10-16 close 48.34): 43.94%\n\nlast 10 sessions (date, close, daily % chg):\n  2026-10-05  80.80  +0.70%\n  2026-10-06  81.24  +0.54%\n  2026-10-07  80.60  -0.79%\n  2026-10-08  78.34  -2.80%\n  2026-10-09  79.15  +1.03%\n  2026-10-12  77.42  -2.19%\n  2026-10-13  77.15  -0.35%\n  2026-10-14  73.43  -4.82%\n  2026-10-15  72.86  -0.78%\n  2026-10-16  69.58  -4.50%\nweek-over-week (vs 2026-10-09 close 79.15): -12.09%\n\nmax closing drawdown in window: -24.05%  (peak 2026-06-02 80.75 -> trough 2026-07-29 61.33)\n\ntop-holding price moves, 2026-10-06 close -> 2026-10-16 close (approx contribution = weight x move):\n  AMD                w= 5.55%  move= -18.58%  approx_contrib=-1.03 pts\n  MRVL               w= 5.07%  move= -20.62%  approx_contrib=-1.05 pts\n  NVDA               w= 4.59%  move= -10.50%  approx_contrib=-0.48 pts\n  TSM(ADR for 2330)  w= 4.59%  move= -14.45%  approx_contrib=-0.66 pts\n  AVGO               w= 4.57%  move= -12.52%  approx_contrib=-0.57 pts\n  MU                 w= 4.33%  move= -15.95%  approx_contrib=-0.69 pts\n  ORCL               w= 3.98%  move= -11.43%  approx_contrib=-0.45 pts\n  CRWV               w= 3.66%  move= -33.07%  approx_contrib=-1.21 pts\n  SMCI               w= 3.23%  move= -27.22%  approx_contrib=-0.88 pts\n  PLTR               w= 3.11%  move=  -3.14%  approx_contrib=-0.10 pts\n  MSFT               w= 3.01%  move=  -0.05%  approx_contrib=-0.00 pts\n  SPCX               w= 2.72%  move= -15.06%  approx_contrib=-0.41 pts\n  IBM                w= 2.70%  move=  +4.90%  approx_contrib=+0.13 pts\n  listed weight total: 51.11%  approx contribution of listed names: -7.41 pts (ARTY total -14.35%; weights are as-of 10/15 so this is an approximation)\n  benchmark SOXX: -16.30%\n  benchmark QQQ: -6.56%\n  ARTY close 10/06 -> 10/16: -14.35%\n\ncross-checks:\n  RH fundamentals high_52_weeks 81.97 (2026-10-06) vs calc 81.97: diff +0.000%\n  RH fundamentals low_52_weeks  43.2611 (2025-11-21) vs calc 43.2611: diff +0.000%\n  RH quote last_trade_price 69.68 vs calc close 69.58: diff +0.144%\n  stockanalysis close 69.58 vs calc: diff +0.000%;  52w high 81.97 vs calc: diff +0.000%\n  close vs iShares NAV 69.5652: premium +0.021%\n  iShares NAV 52w high 81.26 vs calc closing high 81.24: diff +0.025%\n  calc YTD price return to 2026-10-15: 51.22% (iShares YTD NAV total return 51.37%)\n  AUM: iShares 3.711B vs RH market_cap 3.754B (+1.15%) vs stockanalysis 3.88B (+4.55%)\n  shares out: iShares 53,350,000 vs RH 53,875,000 (+0.98%)\n  fund P/E change 6/30 -> 10/15: -23.93%;  P/B 6.74 -> 6.54: -2.97%\n  top-10 weight (10/15): 43.47%   top-15 weight: 58.13%\n  top-10 weight (fact sheet 6/30): 42.75% (as published)\n  CRWV + ORCL combined weight (10/15): 7.64%\n\nweekly closes written: 53 rows -> /home/claude/research/ARTY_weekly.csv\n"
+}

@@ -1,0 +1,235 @@
+{
+  "ticker": "FTEC",
+  "fund_name": "Fidelity MSCI Information Technology Index ETF",
+  "issuer": "Fidelity Investments",
+  "index_tracked": "MSCI USA IMI Information Technology 25/50 Index",
+  "index_source": "Fidelity institutional fact sheet (as of 2026-09-30) https://institutional.fidelity.com/app/proxy/content?literatureURL=%2F9585932.PDF ; TrackInsight https://www.trackinsight.com/en/fund/ARCX:FTEC (retrieved 2026-10-18T20:22Z-20:30Z)",
+  "expense_ratio": {
+    "value": 0.084,
+    "unit": "percent",
+    "source": "mcp__AlphaVantage__ETF_PROFILE net_expense_ratio=0.00084 (last_updated 2026-10-16); matches Fidelity fact sheet 0.084% gross/net as of 2026-09-30",
+    "retrieved_at": "2026-10-18T20:21:48Z"
+  },
+  "net_assets_usd": {
+    "value": 22100000000,
+    "source": "mcp__AlphaVantage__ETF_PROFILE net_assets (last_updated 2026-10-16); Fidelity fact sheet shows $22,147.7M as of 2026-09-30",
+    "retrieved_at": "2026-10-18T20:21:48Z"
+  },
+  "last_trading_date": "2026-10-16",
+  "current_price": {
+    "value": 283.46,
+    "basis": "official close",
+    "date": "2026-10-16",
+    "source": "mcp__AlphaVantage__GLOBAL_QUOTE (price 283.46, latest trading day 2026-10-16); identical close in mcp__AlphaVantage__TIME_SERIES_DAILY (compact) and mcp__robinhood__get_equity_historicals",
+    "retrieved_at": "2026-10-18T20:21:48Z"
+  },
+  "high_52w_intraday": {
+    "value": 311.83,
+    "date": "2026-10-06",
+    "source": "Computed in FTEC_calc.py from mcp__robinhood__get_equity_historicals daily bars (2025-10-01..2026-10-16, split-adjusted); confirmed by mcp__AlphaVantage__TIME_SERIES_DAILY compact + TIME_SERIES_WEEKLY and mcp__robinhood__get_equity_fundamentals high_52_weeks=311.83 (2026-10-06)",
+    "retrieved_at": "2026-10-18T20:21:34Z"
+  },
+  "high_52w_close": {
+    "value": 309.95,
+    "date": "2026-10-06"
+  },
+  "low_52w_intraday": {
+    "value": 198.17,
+    "date": "2026-03-30"
+  },
+  "drop_pct_from_intraday_high": -9.0979,
+  "drop_pct_from_closing_high": -8.5465,
+  "drop_dollars": -28.37,
+  "trading_days_since_high": 8,
+  "returns_pct": {
+    "1m": -2.2619,
+    "3m": 4.8764,
+    "ytd": 26.1673,
+    "1y": 26.6974,
+    "basis": "price only (excludes dividends); 1m=21 sessions (base 2026-09-17), 3m=63 sessions (base 2026-07-20), YTD base 2025-12-31 close 224.67, 1y base 2025-10-16 close 223.73"
+  },
+  "cross_check": {
+    "source": "mcp__robinhood__get_equity_quotes (last_trade_price) + mcp__robinhood__get_equity_fundamentals (high_52_weeks)",
+    "retrieved_at": "2026-10-18T20:21:48Z",
+    "price": 283.62,
+    "high_52w": 311.83,
+    "note": "Robinhood last regular-session trade 283.62 (2026-10-16T19:59:55Z) is +0.0564% vs the official close 283.46; Robinhood high_52_weeks 311.83 dated 2026-10-06 and low_52_weeks 198.17 dated 2026-03-30 match the computed values exactly. No disagreement >0.5%. AlphaVantage compact daily (100 sessions) and weekly (54 weeks) matched the primary daily series with zero OHLC mismatches. Oddity: get_equity_quotes 'close' block still reported 2026-10-15 (292.00) as the last completed session."
+  },
+  "top_holdings": [
+    {
+      "name": "NVIDIA Corp",
+      "symbol": "NVDA",
+      "weight_pct": 17.45
+    },
+    {
+      "name": "Apple Inc",
+      "symbol": "AAPL",
+      "weight_pct": 16.79
+    },
+    {
+      "name": "Microsoft Corp",
+      "symbol": "MSFT",
+      "weight_pct": 11.9
+    },
+    {
+      "name": "Broadcom Inc",
+      "symbol": "AVGO",
+      "weight_pct": 4.15
+    },
+    {
+      "name": "Micron Technology Inc",
+      "symbol": "MU",
+      "weight_pct": 3.93
+    },
+    {
+      "name": "Advanced Micro Devices Inc",
+      "symbol": "AMD",
+      "weight_pct": 3.53
+    },
+    {
+      "name": "Cisco Systems Inc",
+      "symbol": "CSCO",
+      "weight_pct": 1.74
+    },
+    {
+      "name": "Palantir Technologies Inc",
+      "symbol": "PLTR",
+      "weight_pct": 1.71
+    },
+    {
+      "name": "Intel Corp",
+      "symbol": "INTC",
+      "weight_pct": 1.66
+    },
+    {
+      "name": "Lam Research Corp",
+      "symbol": "LRCX",
+      "weight_pct": 1.4
+    }
+  ],
+  "holdings_source": "mcp__AlphaVantage__ETF_PROFILE (retrieved 2026-10-18T20:21:48Z); top-3 = 46.14%, top-10 = 64.26% per FTEC_calc.py. Fidelity fact sheet (2026-09-30) shows a similar list with slightly different weights.",
+  "holdings_as_of": "2026-10-16 (AlphaVantage last_updated 2026-10-16 00:01 UTC)",
+  "drop_summary": "FTEC closed at $283.46 on Friday 2026-10-16, 9.10% below the 52-week intraday high of $311.83 it hit only eight sessions earlier on 2026-10-06 (8.55% below the $309.95 closing high); almost all of the decline came in the week of Oct 12-16 (-7.17%). A global chip selloff did the damage: CEO warnings that financing, not chip supply, may limit the AI build-out, a hotter-than-expected September CPI that lifted 10-year yields above 5% and revived Fed-hike bets, fears of Chinese memory competition, and a strategist downgrade of tech pushed semis and chip-equipment names down 10-23% from the high, while Apple (+2.95%) and Microsoft (flat), about 29% of the fund, cushioned the fall. This is a sharp but short pullback after a 57% run from the March low; the fund is still up 26.17% year to date.",
+  "drivers": [
+    {
+      "driver": "AI financing worries (catalyst, Oct 12)",
+      "detail": "At a Singapore conference, Broadcom CEO Hock Tan said access to capital may become a bigger limit on AI growth than chip or power shortages, and Intel CEO Lip-Bu Tan flagged rising financing costs and uncertain returns. Morgan Stanley data cited via the FT showed AI-related debt issuance fell to $23B in September from a $113B peak in June. Separately, data-center operator Firmus shelved a $5B IPO. AVGO fell 12.52% and INTC 20.13% from FTEC's high date to Oct 16 (FTEC_calc.py).",
+      "date": "2026-10-12",
+      "source_title": "Benzinga: Forget Chip Shortages: Intel, Broadcom CEOs Warn AI's Next Big Crisis Could Be Cash",
+      "url": "https://www.benzinga.com/markets/tech/26/10/62295019"
+    },
+    {
+      "driver": "Hot September CPI pushes yields over 5% and revives Fed-hike bets (Oct 14)",
+      "detail": "September CPI came in at 3.7% y/y versus 3.6% expected (core 2.6% vs 2.5%). The 10-year Treasury yield briefly touched about 5.33%, and the priced odds of an October hike jumped to about 50% from about 20%. Higher rates make debt-funded data centers more expensive. FTEC fell 2.89% that day and NVDA 3.16% (FTEC_calc.py).",
+      "date": "2026-10-14",
+      "source_title": "investingLive: US September CPI 3.7% vs 3.6% expected; XTB: US inflation concerns rise",
+      "url": "https://investinglive.com/news/us-september-cpi-vs-3-6-expected-0/ ; https://www.xtb.com/int/market-analysis/news-and-research/us-inflation-concerns-rise"
+    },
+    {
+      "driver": "Chinese memory competition and memory-cycle fears",
+      "detail": "Reports of a memory-chip architecture breakthrough at China's CXMT raised fears of added supply and a possible memory price war (described as a prospective risk, possibly from 2029). Asian memory names sold off (KOSPI -5.5% on Oct 13). FTEC's memory holdings fell hardest: MU -15.95% and SNDK -21.75% from the high date to Oct 16 (FTEC_calc.py).",
+      "date": "2026-10-13",
+      "source_title": "Roic News: US chip stocks slide as AI financing fears and Chinese competition mount",
+      "url": "https://www.roic.ai/news/us-chip-stocks-slide-as-ai-financing-fears-and-chinese-competition-mount-10-13-2026"
+    },
+    {
+      "driver": "Strategist downgrades and rotation out of crowded tech",
+      "detail": "RBC Capital Markets cut technology to market weight and favored health care, citing slowing semiconductor earnings-revision momentum. Deutsche Bank had warned the prior week that the summer rotation into tech was near its peak.",
+      "date": "2026-10-14",
+      "source_title": "Stocktwits: RBC Capital Markets Echoes Deutsche Bank In Asking Clients To Steer Clear Of Tech In Medium Term",
+      "url": "https://stocktwits.com/news-articles/markets/equity/rbc-capital-markets-echoes-deutsche-bank-in-asking-clients-to-steer-clear-of-tech-in-medium-term/cZxf6veRBqF"
+    },
+    {
+      "driver": "Friday chip rout caps the worst Nasdaq week since June (Oct 16)",
+      "detail": "On Oct 16 SOXX fell 4.14% and XLK 3.03%, with AMD -5.96%, INTC -5.79%, MU -5.63%, AVGO -4.53%, and the Nasdaq -2.15% (-4.48% for the week). Coverage attributed the move mainly to AI-financing worries rather than yields, which eased to 5.09%, while December hike odds stood at 74.3%. FTEC fell 2.92% that day; Robinhood closes reproduce the single-stock moves (FTEC_calc.py).",
+      "date": "2026-10-16",
+      "source_title": "TS2: Nasdaq drops 2.1% as chip rout caps a 4.5% weekly slide",
+      "url": "https://ts2.tech/en/nasdaq-drops-2-1-as-chip-rout-caps-a-4-5-weekly-slide/"
+    },
+    {
+      "driver": "Mega-cap ballast limited the damage; semis carried the decline",
+      "detail": "Approximate attribution (constant 10/16 weights x price change, 2026-10-06 to 2026-10-16 closes): NVDA alone took about -1.83 pts of FTEC's -8.55%. AAPL added about +0.50 pts and MSFT was flat (-0.01 pts). Top-20 holdings explain about -5.48 pts, and the rest of the fund about -3.07 pts. Chip-equipment names fell steeply: AMAT -22.81%, LRCX -20.95%, KLAC -16.06%.",
+      "date": "2026-10-06 to 2026-10-16",
+      "source_title": "FTEC_calc.py on mcp__robinhood__get_equity_historicals closes + mcp__AlphaVantage__ETF_PROFILE weights",
+      "url": "file:///home/claude/research/FTEC_calc.py"
+    }
+  ],
+  "bull_case": [
+    {
+      "point": "AI chip demand and earnings are still growing fast",
+      "evidence": "Nvidia, FTEC's largest holding at 17.45%, reported fiscal Q2 2027 revenue of $96.2B (+106% y/y), data-center revenue of $89.0B, and guided Q3 to about $108B. The selloff came on sentiment, not a reported earnings miss.",
+      "source_title": "iPhone in Canada: Nvidia Blows Past Expectations with $96.2 Billion Revenue in Q2 2027 (2026-08-27)",
+      "url": "https://www.iphoneincanada.ca/2026/08/27/nvidia-blows-past-expectations-with-96-2-billion-revenue-in-q2-2027/"
+    },
+    {
+      "point": "Supply-chain bellwether guided well above expectations mid-selloff",
+      "evidence": "TSMC Q3 2026 revenue was $46.7B (+41%, above the $44.9B expected), with Q4 guidance of $52.3-54.3B against $49.1B expected. Management's AI-demand growth target of mid-to-high 50s% a year through 2029 is seen as possibly conservative.",
+      "source_title": "Hargreaves Lansdown: TSMC Q3 results - strong quarter, record guidance (2026-10-15)",
+      "url": "https://www.hl.co.uk/shares/share-research/tsmc-q3-results-strong-quarter-record-guidance"
+    },
+    {
+      "point": "Industry leaders still see compute demand outrunning supply",
+      "evidence": "In the same remarks that flagged financing risk, Broadcom's CEO said he expects computing demand to exceed supply through 2029, possibly into 2030. Intel's CEO sees strong AI-infrastructure demand for the next two to three years.",
+      "source_title": "Benzinga (2026-10-12)",
+      "url": "https://www.benzinga.com/markets/tech/26/10/62295019"
+    },
+    {
+      "point": "Shallow pullback within a strong trend",
+      "evidence": "Even after the drop, FTEC is +26.17% YTD, +26.70% over one year, and 43.04% above its 52-week low. The current drawdown (-9.10%) is smaller than the Jan-Mar 2026 closing drawdown of -13.75% that preceded a 55.41% rally (FTEC_calc.py).",
+      "source_title": "FTEC_calc.py on mcp__robinhood__get_equity_historicals daily data",
+      "url": "file:///home/claude/research/FTEC_calc.py"
+    },
+    {
+      "point": "Low-cost, broad tech exposure with mega-cap ballast",
+      "evidence": "The expense ratio is 0.084% (Fidelity fact sheet, 2026-09-30) and the fund holds hundreds of names from mega to small cap. During this selloff AAPL (+2.95%) and MSFT (-0.05%), about 28.7% of the fund, offset part of the semiconductor losses (FTEC_calc.py).",
+      "source_title": "Fidelity MSCI Information Technology Index ETF fact sheet (as of 2026-09-30)",
+      "url": "https://institutional.fidelity.com/app/proxy/content?literatureURL=%2F9585932.PDF"
+    }
+  ],
+  "bear_case": [
+    {
+      "point": "Heavy concentration in three stocks",
+      "evidence": "NVDA, AAPL and MSFT are 46.14% of the fund and the top 10 are 64.26% (ETF_PROFILE as of 2026-10-16). NVDA's 10.50% fall since the high alone cost about 1.83 pts of FTEC's 8.55% decline (FTEC_calc.py).",
+      "source_title": "mcp__AlphaVantage__ETF_PROFILE + FTEC_calc.py",
+      "url": "file:///home/claude/research/FTEC_calc.py"
+    },
+    {
+      "point": "Rich valuation leaves little room for disappointment",
+      "evidence": "Robinhood fundamentals show FTEC at a P/E of 38.50 and a P/B of 11.44 (market date 2026-10-16; basis not stated, likely trailing). UBS framed the chip drop as a reassessment of expectations, and Bloomberg-cited coverage named elevated valuations as one reason.",
+      "source_title": "mcp__robinhood__get_equity_fundamentals; Crypto Briefing: Chip-stock index faces $1 trillion loss as AI concerns deepen (2026-10-14)",
+      "url": "https://cryptobriefing.com/semiconductor-stocks-lose-1-trillion-ai-fears/"
+    },
+    {
+      "point": "Inflation and rates moving the wrong way",
+      "evidence": "September CPI was 3.7% y/y, above the 3.6% forecast, and the 10-year yield is above 5% (5.09% on Oct 16). Market-implied odds of a December Fed hike reached 74.3%, up from 50.2% a month earlier, which raises the cost of capital for long-duration tech and debt-funded AI build-outs.",
+      "source_title": "TS2: Nasdaq drops 2.1% as chip rout caps a 4.5% weekly slide (2026-10-16)",
+      "url": "https://ts2.tech/en/nasdaq-drops-2-1-as-chip-rout-caps-a-4-5-weekly-slide/"
+    },
+    {
+      "point": "AI capex may be outrunning its funding and returns",
+      "evidence": "AI-related debt issuance fell to $23B in September from $113B in June (Morgan Stanley via FT). Broadcom is backstopping some customer lease obligations, with up to $29B exposure on its first deal. A Gartner estimate puts AI-provider investment near $7T through 2030 against at most $3.6T of AI revenue.",
+      "source_title": "Benzinga (2026-10-12); CGTN: Hot US inflation, rising AI costs spark global chip-stock rout (2026-10-15)",
+      "url": "https://www.benzinga.com/markets/tech/26/10/62295019 ; https://news.cgtn.com/news/2026-10-15/Hot-US-inflation-rising-AI-costs-spark-global-chip-stock-rout-1RgbacuNxwA/share_amp.html"
+    },
+    {
+      "point": "Memory-cycle and China-competition risk, plus waning analyst support",
+      "evidence": "CXMT's reported breakthrough raised memory-oversupply fears. FTEC's memory names (MU 3.93% + SNDK 0.81% weight) fell 16-22% from the high. RBC downgraded tech to market weight on Oct 14, citing slowing semiconductor estimate revisions.",
+      "source_title": "Roic News (2026-10-15): Chip stocks slump as inflation fears and AI financing doubts mount; Stocktwits (2026-10-14)",
+      "url": "https://www.roic.ai/news/chip-stocks-slump-as-inflation-fears-and-ai-financing-doubts-mount-10-15-2026 ; https://stocktwits.com/news-articles/markets/equity/rbc-capital-markets-echoes-deutsche-bank-in-asking-clients-to-steer-clear-of-tech-in-medium-term/cZxf6veRBqF"
+    }
+  ],
+  "data_gaps": [
+    "mcp__AlphaVantage__TIME_SERIES_DAILY outputsize=full is premium-only (refused). The primary daily series is mcp__robinhood__get_equity_historicals (day, regular session, split-adjusted, 2025-10-01..2026-10-16, 263 rows). It was validated against AlphaVantage compact daily (100 sessions, 0 mismatches) and AlphaVantage weekly (54 weeks, 0 high/low/close mismatches; 6 weeks show <0.1% volume differences).",
+    "mcp__AlphaVantage__NEWS_SENTIMENT is premium-only (refused), so the news drivers come from WebSearch/WebFetch.",
+    "Fidelity's retail product page (digital.fidelity.com) returned only a navigation shell. Fund facts come from Fidelity's institutional fact-sheet PDF (as of 2026-09-30) and AlphaVantage ETF_PROFILE.",
+    "Returns are price-only and exclude dividends (Robinhood shows a 0.41% yield, paid quarterly).",
+    "Holding attribution is approximate: constant 2026-10-16 weights x close-to-close price change, top 20 holdings only (73.91% of the fund). The -3.07 pt remainder is the residual, not verified holding by holding.",
+    "Holding weights differ by source and date: AlphaVantage (2026-10-16) has AAPL at 16.79% and MU at 3.93%, while the Fidelity fact sheet (2026-09-30) has AAPL at 15.94% and MU at 4.47%.",
+    "AlphaVantage SPLITS returned no split events for FTEC; the Robinhood series is split-adjusted, so no adjusted/unadjusted mixing is expected.",
+    "Several news items come from aggregator or secondary sites (roic.ai, ts2.tech, stocktwits, heygotrade) citing Bloomberg, Reuters, AP, CNBC or the FT secondhand; the primary wire stories were not fetched. One roic.ai article (dated 2026-10-15) is ambiguous about which session it describes.",
+    "The CXMT memory breakthrough was not verified against a primary source.",
+    "The basis of Robinhood's FTEC P/E (38.50) is not stated (likely trailing) and was not cross-checked.",
+    "Robinhood get_equity_quotes reported 2026-10-15 as the last completed-session close (292.00) even though the 2026-10-16 session had finished. The official 2026-10-16 close of 283.46 comes from AlphaVantage GLOBAL_QUOTE and daily data and matches the Robinhood daily bar."
+  ],
+  "calc_output": "rows=263 first=2025-10-01 last=2026-10-16 OHLC-inconsistent rows=0\nAV compact overlap: 100 sessions (2026-05-27..2026-10-16), mismatches=0\n  weekly volume diff wk-ending 2025-11-07: daily-agg=1921195 AVweekly=1920720 (RH regular-session vs AV consolidated)\n  weekly volume diff wk-ending 2025-12-12: daily-agg=1317672 AVweekly=1316688 (RH regular-session vs AV consolidated)\n  weekly volume diff wk-ending 2026-01-23: daily-agg=1541722 AVweekly=1540816 (RH regular-session vs AV consolidated)\n  weekly volume diff wk-ending 2026-01-30: daily-agg=4134226 AVweekly=4133013 (RH regular-session vs AV consolidated)\n  weekly volume diff wk-ending 2026-02-06: daily-agg=2438862 AVweekly=2437095 (RH regular-session vs AV consolidated)\n  weekly volume diff wk-ending 2026-05-22: daily-agg=1512761 AVweekly=1511749 (RH regular-session vs AV consolidated)\nAV weekly check: 54 weeks compared, high/low/close mismatches=0\n\nlast_trading_date        = 2026-10-16\nwindow                   = 2025-10-16 .. 2026-10-16 (252 sessions; start bound 2025-10-16)\ncurrent (last close)     = 283.46\nhigh_52w_intraday        = 311.8300 on 2026-10-06\nhigh_52w_close           = 309.95 on 2026-10-06\nlow_52w_intraday         = 198.1700 on 2026-03-30\nlow_52w_close            = 199.44 on 2026-03-30\ndrop_pct_from_intraday_high = -9.0979%\ndrop_pct_from_closing_high  = -8.5465%\ndrop_dollars (vs intraday)  = -28.3700\ndrop_dollars (vs close hi)  = -26.4900\ntrading_days_since_intraday_high = 8\ntrading_days_since_close_high    = 8\nrise from 52w low to intraday high = 57.3548%\ncurrent vs 52w intraday low        = 43.0388%\n\nreturn_1m (21 sessions, base 2026-09-17 close 290.02) = -2.2619%\nreturn_3m (63 sessions, base 2026-07-20 close 270.28) = 4.8764%\nreturn_ytd (base 2025-12-31 close 224.67) = 26.1673%\nreturn_1y (base 2025-10-16 close 223.73, last close on/before 2025-10-16) = 26.6974%\n\nCloses from intraday-high date to last date:\n  2026-10-06  close 309.95  day +0.49%\n  2026-10-07  close 308.92  day -0.33%\n  2026-10-08  close 303.76  day -1.67%\n  2026-10-09  close 305.37  day +0.53%\n  2026-10-12  close 301.92  day -1.13%\n  2026-10-13  close 301.79  day -0.04%\n  2026-10-14  close 293.08  day -2.89%\n  2026-10-15  close 292.00  day -0.37%\n  2026-10-16  close 283.46  day -2.92%\nweek of 2026-10-12..16: prior Fri close 305.37 -> 283.46 = -7.1749%\nQ1-2026 context: closing high 231.23 (2026-01-28) -> closing low 199.44 (2026-03-30) = -13.7482%\nrally from 2026-03-30 close 199.44 to closing high 309.95 = 55.4101%\n\nAV GLOBAL_QUOTE price 283.46 vs daily close 283.46: diff +0.0000%\nRH last_trade_price 283.62 vs official close 283.46: diff +0.0564%\nRH high_52_weeks 311.83 vs computed 311.83: diff +0.0000%\nRH low_52_weeks 198.17 vs computed 198.17: diff +0.0000%\ntop-3 weight = 46.14%  top-10 weight = 64.26%\nwrote FTEC_weekly.csv with 53 weekly closes\n\nTop-20 holdings, 2026-10-06 close -> 2026-10-16 close (approx. contribution = weight x return):\n  NVDA  w=17.45%     239.24 ->    214.13   -10.50%  contrib -1.832 pts   | wk 10/09->10/16   -6.61%\n  AAPL  w=16.79%     333.63 ->    343.46    +2.95%  contrib +0.495 pts   | wk 10/09->10/16   +2.03%\n  MSFT  w=11.90%     529.30 ->    529.05    -0.05%  contrib -0.006 pts   | wk 10/09->10/16   -1.13%\n  AVGO  w= 4.15%     375.81 ->    328.75   -12.52%  contrib -0.520 pts   | wk 10/09->10/16   -9.07%\n  MU    w= 3.93%    1045.56 ->    878.84   -15.95%  contrib -0.627 pts   | wk 10/09->10/16  -14.59%\n  AMD   w= 3.53%     649.42 ->    528.75   -18.58%  contrib -0.656 pts   | wk 10/09->10/16  -13.05%\n  CSCO  w= 1.74%     117.94 ->    107.39    -8.95%  contrib -0.156 pts   | wk 10/09->10/16   -9.29%\n  PLTR  w= 1.71%     192.07 ->    186.03    -3.14%  contrib -0.054 pts   | wk 10/09->10/16  -11.01%\n  INTC  w= 1.66%     112.50 ->     89.85   -20.13%  contrib -0.334 pts   | wk 10/09->10/16  -14.18%\n  LRCX  w= 1.40%     333.89 ->    263.94   -20.95%  contrib -0.293 pts   | wk 10/09->10/16  -17.22%\n  AMAT  w= 1.38%     530.27 ->    409.29   -22.81%  contrib -0.315 pts   | wk 10/09->10/16  -19.28%\n  PANW  w= 1.20%     419.91 ->    342.00   -18.55%  contrib -0.223 pts   | wk 10/09->10/16  -18.33%\n  TXN   w= 1.01%     297.23 ->    276.48    -6.98%  contrib -0.071 pts   | wk 10/09->10/16   -2.56%\n  CRWD  w= 0.99%     278.86 ->    227.39   -18.46%  contrib -0.183 pts   | wk 10/09->10/16  -17.32%\n  KLAC  w= 0.92%     197.46 ->    165.74   -16.06%  contrib -0.148 pts   | wk 10/09->10/16  -15.25%\n  ANET  w= 0.84%     215.36 ->    176.98   -17.82%  contrib -0.150 pts   | wk 10/09->10/16  -18.34%\n  ORCL  w= 0.84%     144.77 ->    128.23   -11.43%  contrib -0.096 pts   | wk 10/09->10/16   -9.31%\n  MRVL  w= 0.84%     287.01 ->    227.83   -20.62%  contrib -0.173 pts   | wk 10/09->10/16  -17.24%\n  IBM   w= 0.82%     221.29 ->    232.14    +4.90%  contrib +0.040 pts   | wk 10/09->10/16   +2.21%\n  SNDK  w= 0.81%    1660.46 ->   1299.30   -21.75%  contrib -0.176 pts   | wk 10/09->10/16  -17.86%\n  top-10 approx contribution = -3.982 pts; top-20 (weight 73.91%) = -5.475 pts\n  FTEC close-to-close 2026-10-06 -> 2026-10-16: -8.5465%; remainder from other holdings ~ -3.072 pts\n\nAlphaVantage-only check: weekly bars ending 2025-10-17..2026-10-16 -> max high 311.83 (week ending 2026-10-09), min low 198.17 (week ending 2026-04-02); compact daily max high 311.83 on 2026-10-06\n  note: first AV weekly bar (week ending 2025-10-17) includes 2025-10-13..15, which predate the window start\n  NVDA  2026-10-14: 228.52 -> 221.3 = -3.16%\n  AMD   2026-10-16: 562.23 -> 528.75 = -5.95%\n  INTC  2026-10-16: 95.37 -> 89.85 = -5.79%\n  MU    2026-10-16: 931.24 -> 878.84 = -5.63%\n  AVGO  2026-10-16: 344.33 -> 328.75 = -4.52%\n  AAPL  2026-10-16: 342.0 -> 343.46 = +0.43%\nAAPL+MSFT combined weight = 28.69%\n"
+}

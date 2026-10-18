@@ -1,0 +1,21 @@
+GOAL
+For each ticker: find the 52 week high and then calculate how much did it dropped from the 52 week high.  Use subagent to do the research of each ticker.  Done is when every ticker is cover.
+
+PROCESS
+1. Pull the 52 week high for each of the stock and calculate the current price.  Calculate how much percentage it drop from the 52 week high.  Always use a tool call to calculate the stock price and the price drop.
+2. Deep dive into each of the ticker, and report on what caused it to drop.
+3. Argue the bull and bear case for each.
+
+RULES FOR EVERY WORKER
+- Every number comes from a tool call, with source and timestamp.
+  Never state a price, ratio or indicator from memory.
+- "No data" is an acceptable answer. A guess is not.
+
+REPORTING
+- Create a HTML report after retrieving all the data from the workers.
+
+STOCK TICKERS
+NVDA, AAPL, MSFT, MU, AVGO, AMD, TSM, TXN, MRVL
+
+EFT TICKER
+FTEC, QQQ, SMH, ARTY

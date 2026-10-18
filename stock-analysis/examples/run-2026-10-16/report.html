@@ -1,0 +1,727 @@
+<title>Tech ETF Drawdowns</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>/* Layout: single reading column; overview table up top, then one panel per fund (facts → chart → drivers → bull/bear). Terminal-adjacent: condensed headings, mono figures. */
+:root {
+  --bg: #F2F4F7;
+  --surface: #FFFFFF;
+  --ink: #142033;
+  --muted: #586880;
+  --line: #D6DCE5;
+  --accent: #1F5FBF;
+  --accent-soft: rgba(31, 95, 191, 0.10);
+  --loss: #B8372A;
+  --loss-soft: rgba(184, 55, 42, 0.09);
+  --gain: #1B7A50;
+  --gain-soft: rgba(27, 122, 80, 0.09);
+  --font-display: "IBM Plex Sans Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D131B; --surface: #141C27; --ink: #E4EAF2; --muted: #93A1B4; --line: #283445;
+    --accent: #7AA7F2; --accent-soft: rgba(122, 167, 242, 0.14);
+    --loss: #F07A68; --loss-soft: rgba(240, 122, 104, 0.12);
+    --gain: #55C792; --gain-soft: rgba(85, 199, 146, 0.12);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D131B; --surface: #141C27; --ink: #E4EAF2; --muted: #93A1B4; --line: #283445;
+  --accent: #7AA7F2; --accent-soft: rgba(122, 167, 242, 0.14);
+  --loss: #F07A68; --loss-soft: rgba(240, 122, 104, 0.12);
+  --gain: #55C792; --gain-soft: rgba(85, 199, 146, 0.12);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+}
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding-block: 40px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 28px;
+}
+
+.top { display: grid; gap: 10px; max-width: 70ch; }
+.eyebrow {
+  margin: 0; font-family: var(--font-data); font-size: 12px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted);
+}
+h1 {
+  margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 4.2vw, 38px);
+  line-height: 1.12; letter-spacing: -0.01em; text-wrap: balance;
+}
+.lede { margin: 0; color: var(--muted); }
+
+/* Overview */
+.overview { display: grid; gap: 8px; }
+.tblwrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+.sum { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; min-width: 640px; }
+.sum th, .sum td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+.sum tbody tr:last-child td { border-bottom: 0; }
+.sum th {
+  font-family: var(--font-data); font-size: 11px; font-weight: 500; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted);
+}
+.num { text-align: right !important; font-family: var(--font-data); white-space: nowrap; }
+.sub, .fname { font-size: 12px; color: var(--muted); font-family: var(--font-body); }
+.tkr { font-family: var(--font-data); font-weight: 500; color: var(--accent); text-decoration: none; }
+.neg { color: var(--loss); }
+.pos { color: var(--gain); }
+.barcell { width: 26%; }
+.bar { height: 10px; border-radius: 2px; background: var(--loss); opacity: 0.85; min-width: 2px; }
+
+.src { margin: 0; font-size: 12px; color: var(--muted); }
+.nodata { color: var(--muted); font-style: italic; }
+
+/* Fund panels */
+.fund {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 24px; display: grid; gap: 18px; min-width: 0;
+}
+.fund-head { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: flex-start; }
+.fund-head > div:first-child { min-width: 0; flex: 1 1 320px; }
+h2 {
+  margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 1.2;
+  text-wrap: balance;
+}
+h2 .tkr { margin-right: 6px; }
+.meta { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+.drop-badge {
+  display: grid; justify-items: end; gap: 0; padding: 8px 12px; border-radius: 6px;
+  background: var(--loss-soft); color: var(--loss);
+}
+.drop-badge .big { font-family: var(--font-data); font-size: 26px; font-weight: 500; line-height: 1.1; }
+.drop-badge span:last-child { font-size: 12px; }
+
+.facts, .rets { margin: 0; display: grid; gap: 12px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.facts > div, .rets > div { display: grid; gap: 2px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; min-width: 0; }
+.rets > div { border: 0; padding: 0; }
+dt { font-family: var(--font-data); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+dd { margin: 0; font-family: var(--font-data); font-size: 18px; font-variant-numeric: tabular-nums; }
+.facts small { color: var(--muted); font-size: 12px; font-family: var(--font-data); }
+.rets dd { font-size: 15px; }
+
+figure { margin: 0; display: grid; gap: 6px; }
+figcaption { font-size: 12px; color: var(--muted); }
+.spark { width: 100%; height: auto; max-width: 100%; display: block; }
+.spark .grid { stroke: var(--line); stroke-width: 1; }
+.spark .axis { fill: var(--muted); font-family: var(--font-data); font-size: 10.5px; }
+.spark .area { fill: var(--accent-soft); stroke: none; }
+.spark .line { stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
+.spark .hiline { stroke: var(--loss); stroke-width: 1.25; stroke-dasharray: 5 4; }
+.spark .hilabel { fill: var(--loss); font-family: var(--font-data); font-size: 11px; }
+.spark .endpt { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+
+h3 { margin: 4px 0 0; font-family: var(--font-display); font-weight: 600; font-size: 18px; }
+h4 { margin: 14px 0 6px; font-family: var(--font-display); font-weight: 600; font-size: 15px; }
+.summary { margin: 0; max-width: 72ch; }
+
+.drivers { margin: 0; padding-left: 22px; display: grid; gap: 12px; }
+.drivers li { padding-left: 4px; }
+.drivers li::marker { font-family: var(--font-data); color: var(--muted); }
+.drv-head { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.drv-head time { font-family: var(--font-data); font-size: 12px; color: var(--muted); }
+.drivers p { margin: 2px 0; max-width: 72ch; }
+cite { font-style: normal; font-size: 12px; color: var(--muted); }
+cite a { color: var(--muted); }
+
+.cases { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.cases > div { border-radius: 8px; padding: 14px 16px; min-width: 0; }
+.bull { background: var(--gain-soft); }
+.bull h3 { color: var(--gain); }
+.bear { background: var(--loss-soft); }
+.bear h3 { color: var(--loss); }
+.case { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.case li { display: grid; gap: 2px; }
+.case span { font-size: 14px; }
+
+details { border-top: 1px solid var(--line); padding-top: 12px; }
+summary { cursor: pointer; font-weight: 500; color: var(--accent); }
+.hold { font-size: 13px; }
+.hold th, .hold td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: left; }
+.hold th { font-family: var(--font-data); font-size: 11px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+.gaps { margin: 0; padding-left: 18px; font-size: 13px; }
+pre {
+  margin: 0; padding: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+  font-family: var(--font-data); font-size: 12px; overflow-x: auto; white-space: pre;
+}
+
+.foot { color: var(--muted); font-size: 13px; max-width: 72ch; }
+
+@media (max-width: 720px) {
+  .facts, .rets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cases { grid-template-columns: 1fr; }
+  .fund { padding: 18px 16px; }
+  .drop-badge { justify-items: start; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+<main class="wrap">
+  <header class="top">
+    <p class="eyebrow">ETF drawdown review · prices as of close 2026-10-16</p>
+    <h1>How far FTEC, QQQ, SMH and ARTY sit below their 52-week highs</h1>
+    <p class="lede">Each fund was researched by a separate worker. Every price comes from a market-data tool call with its source and timestamp, and every drop was recomputed in code from the saved daily series. Where a source had nothing, the report says "No data".</p>
+  </header>
+
+  <section class="overview">
+    <div class="tblwrap"><table class="sum">
+      <thead><tr><th>ETF</th><th class="num">Last close</th><th class="num">52-wk high</th><th class="num">Drop</th><th>Distance below high</th><th class="num">Sessions since high</th></tr></thead>
+      <tbody><tr><td><a class='tkr' href='#ftec'>FTEC</a><div class='fname'>Fidelity MSCI Information Technology Index ETF</div></td><td class='num'>$283.46</td><td class='num'>$311.83<div class='sub'>2026-10-06</div></td><td class='num neg'>-9.10%</td><td class='barcell'><div class='bar' style='width:46.3%'></div></td><td class='num'>8</td></tr><tr><td><a class='tkr' href='#qqq'>QQQ</a><div class='fname'>Invesco QQQ Trust, Series 1</div></td><td class='num'>$709.80</td><td class='num'>$762.86<div class='sub'>2026-10-06</div></td><td class='num neg'>-6.96%</td><td class='barcell'><div class='bar' style='width:35.4%'></div></td><td class='num'>8</td></tr><tr><td><a class='tkr' href='#smh'>SMH</a><div class='fname'>VanEck Semiconductor ETF</div></td><td class='num'>$539.79</td><td class='num'>$671.83<div class='sub'>2026-06-22</div></td><td class='num neg'>-19.65%</td><td class='barcell'><div class='bar' style='width:100.0%'></div></td><td class='num'>82</td></tr><tr><td><a class='tkr' href='#arty'>ARTY</a><div class='fname'>iShares Future AI &amp; Tech ETF</div></td><td class='num'>$69.58</td><td class='num'>$81.97<div class='sub'>2026-10-06</div></td><td class='num neg'>-15.12%</td><td class='barcell'><div class='bar' style='width:76.9%'></div></td><td class='num'>8</td></tr></tbody>
+    </table></div>
+    <p class="src">Drop = last close ÷ 52-week intraday high − 1. Window: trailing 365 calendar days ending on the last trading date.</p>
+  </section>
+
+  
+<section class="fund" id="ftec">
+  <header class="fund-head">
+    <div>
+      <h2><span class="tkr">FTEC</span> Fidelity MSCI Information Technology Index ETF</h2>
+      <p class="meta">Fidelity Investments · Tracks MSCI USA IMI Information Technology 25/50 Index · Expense ratio 0.084%</p>
+    </div>
+    <div class="drop-badge"><span class="big">-9.10%</span><span>from 52-wk high</span></div>
+  </header>
+
+  <dl class="facts">
+    <div><dt>Last close</dt><dd>$283.46</dd><small>2026-10-16</small></div>
+    <div><dt>52-wk high (intraday)</dt><dd>$311.83</dd><small>2026-10-06</small></div>
+    <div><dt>Below high</dt><dd>$28.37</dd><small>-8.55% vs closing high</small></div>
+    <div><dt>52-wk low</dt><dd>$198.17</dd><small>2026-03-30</small></div>
+  </dl>
+
+  <figure><svg viewBox="0 0 640 200" class="spark" role="img" aria-label="Weekly closes over the past 52 weeks against the 52-week high">
+  <line x1="52" x2="626" y1="154.0" y2="154.0" class="grid"/><text x="46" y="157.5" class="axis" text-anchor="end">207</text><line x1="52" x2="626" y1="114.0" y2="114.0" class="grid"/><text x="46" y="117.5" class="axis" text-anchor="end">239</text><line x1="52" x2="626" y1="74.0" y2="74.0" class="grid"/><text x="46" y="77.5" class="axis" text-anchor="end">271</text><line x1="52" x2="626" y1="34.0" y2="34.0" class="grid"/><text x="46" y="37.5" class="axis" text-anchor="end">303</text>
+  <polygon points="52.0,174 52.0,133.1 63.0,124.7 74.1,117.3 85.1,129.3 96.2,131.2 107.2,145.1 118.2,132.6 129.3,126.7 140.3,132.0 151.3,131.1 162.4,127.0 173.4,131.1 184.5,129.0 195.5,130.1 206.5,131.5 217.6,134.3 228.6,137.2 239.7,140.6 250.7,137.6 261.7,142.3 272.8,145.2 283.8,146.8 294.8,150.5 305.9,159.2 316.9,147.4 328.0,135.9 339.0,112.5 350.0,102.1 361.1,100.0 372.1,77.2 383.2,74.4 394.2,67.2 405.2,51.0 416.3,68.5 427.3,63.9 438.3,54.4 449.4,72.0 460.4,70.3 471.5,60.0 482.5,75.0 493.5,74.5 504.6,75.0 515.6,50.2 526.7,46.9 537.7,59.3 548.7,54.3 559.8,50.9 570.8,51.2 581.8,47.8 592.9,35.9 603.9,29.5 615.0,30.7 626.0,58.2 626.0,174" class="area"/>
+  <polyline points="52.0,133.1 63.0,124.7 74.1,117.3 85.1,129.3 96.2,131.2 107.2,145.1 118.2,132.6 129.3,126.7 140.3,132.0 151.3,131.1 162.4,127.0 173.4,131.1 184.5,129.0 195.5,130.1 206.5,131.5 217.6,134.3 228.6,137.2 239.7,140.6 250.7,137.6 261.7,142.3 272.8,145.2 283.8,146.8 294.8,150.5 305.9,159.2 316.9,147.4 328.0,135.9 339.0,112.5 350.0,102.1 361.1,100.0 372.1,77.2 383.2,74.4 394.2,67.2 405.2,51.0 416.3,68.5 427.3,63.9 438.3,54.4 449.4,72.0 460.4,70.3 471.5,60.0 482.5,75.0 493.5,74.5 504.6,75.0 515.6,50.2 526.7,46.9 537.7,59.3 548.7,54.3 559.8,50.9 570.8,51.2 581.8,47.8 592.9,35.9 603.9,29.5 615.0,30.7 626.0,58.2" class="line" fill="none"/>
+  <line x1="52" x2="626" y1="22.6" y2="22.6" class="hiline"/>
+  <text x="626" y="17.6" class="hilabel" text-anchor="end">52-wk high 311.83</text>
+  <circle cx="626.0" cy="58.2" r="4" class="endpt"/>
+  <text x="52.0" y="192" class="axis" text-anchor="start">2025-10-17</text><text x="339.0" y="192" class="axis" text-anchor="middle">2026-04-17</text><text x="626.0" y="192" class="axis" text-anchor="end">2026-10-16</text>
+</svg>
+    <figcaption>Weekly closes, trailing 52 weeks. Dashed line = 52-week intraday high.</figcaption>
+  </figure>
+
+  <dl class="rets"><div><dt>1 month</dt><dd class="neg">-2.26%</dd></div><div><dt>3 months</dt><dd class="pos">+4.88%</dd></div><div><dt>YTD</dt><dd class="pos">+26.17%</dd></div><div><dt>1 year</dt><dd class="pos">+26.70%</dd></div></dl>
+  <p class="src">Price source: mcp__AlphaVantage__GLOBAL_QUOTE (price 283.46, latest trading day 2026-10-16); identical close in mcp__AlphaVantage__TIME_SERIES_DAILY (compact) and mcp__robinhood__get_equity_historicals · retrieved 2026-10-18T20:21:48Z. 52-wk high source: Computed in FTEC_calc.py from mcp__robinhood__get_equity_historicals daily bars (2025-10-01..2026-10-16, split-adjusted); confirmed by mcp__AlphaVantage__TIME_SERIES_DAILY compact + TIME_SERIES_WEEKLY and mcp__robinhood__get_equity_fundamentals high_52_weeks=311.83 (2026-10-06) · retrieved 2026-10-18T20:21:34Z.</p>
+  <p class="src">Cross-check (mcp__robinhood__get_equity_quotes (last_trade_price) + mcp__robinhood__get_equity_fundamentals (high_52_weeks), 2026-10-18T20:21:48Z): price $283.62, 52-wk high $311.83 — Robinhood last regular-session trade 283.62 (2026-10-16T19:59:55Z) is +0.0564% vs the official close 283.46; Robinhood high_52_weeks 311.83 dated 2026-10-06 and low_52_weeks 198.17 dated 2026-03-30 match the computed values exactly. No disagreement &gt;0.5%. AlphaVantage compact daily (100 sessions) and weekly (54 weeks) matched the primary daily series with zero OHLC mismatches. Oddity: get_equity_quotes &#x27;close&#x27; block still reported 2026-10-15 (292.00) as the last completed session.</p>
+
+  <h3>What drove the drop</h3>
+  <p class="summary">FTEC closed at $283.46 on Friday 2026-10-16, 9.10% below the 52-week intraday high of $311.83 it hit only eight sessions earlier on 2026-10-06 (8.55% below the $309.95 closing high); almost all of the decline came in the week of Oct 12-16 (-7.17%). A global chip selloff did the damage: CEO warnings that financing, not chip supply, may limit the AI build-out, a hotter-than-expected September CPI that lifted 10-year yields above 5% and revived Fed-hike bets, fears of Chinese memory competition, and a strategist downgrade of tech pushed semis and chip-equipment names down 10-23% from the high, while Apple (+2.95%) and Microsoft (flat), about 29% of the fund, cushioned the fall. This is a sharp but short pullback after a 57% run from the March low; the fund is still up 26.17% year to date.</p>
+  <ol class="drivers"><li><div class="drv-head"><strong>AI financing worries (catalyst, Oct 12)</strong><time>2026-10-12</time></div><p>At a Singapore conference, Broadcom CEO Hock Tan said access to capital may become a bigger limit on AI growth than chip or power shortages, and Intel CEO Lip-Bu Tan flagged rising financing costs and uncertain returns. Morgan Stanley data cited via the FT showed AI-related debt issuance fell to $23B in September from a $113B peak in June. Separately, data-center operator Firmus shelved a $5B IPO. AVGO fell 12.52% and INTC 20.13% from FTEC&#x27;s high date to Oct 16 (FTEC_calc.py).</p><cite><a href="https://www.benzinga.com/markets/tech/26/10/62295019" target="_blank" rel="noopener">Benzinga: Forget Chip Shortages: Intel, Broadcom CEOs Warn AI&#x27;s Next Big Crisis Could Be Cash</a></cite></li><li><div class="drv-head"><strong>Hot September CPI pushes yields over 5% and revives Fed-hike bets (Oct 14)</strong><time>2026-10-14</time></div><p>September CPI came in at 3.7% y/y versus 3.6% expected (core 2.6% vs 2.5%). The 10-year Treasury yield briefly touched about 5.33%, and the priced odds of an October hike jumped to about 50% from about 20%. Higher rates make debt-funded data centers more expensive. FTEC fell 2.89% that day and NVDA 3.16% (FTEC_calc.py).</p><cite><a href="https://investinglive.com/news/us-september-cpi-vs-3-6-expected-0/ ; https://www.xtb.com/int/market-analysis/news-and-research/us-inflation-concerns-rise" target="_blank" rel="noopener">investingLive: US September CPI 3.7% vs 3.6% expected; XTB: US inflation concerns rise</a></cite></li><li><div class="drv-head"><strong>Chinese memory competition and memory-cycle fears</strong><time>2026-10-13</time></div><p>Reports of a memory-chip architecture breakthrough at China&#x27;s CXMT raised fears of added supply and a possible memory price war (described as a prospective risk, possibly from 2029). Asian memory names sold off (KOSPI -5.5% on Oct 13). FTEC&#x27;s memory holdings fell hardest: MU -15.95% and SNDK -21.75% from the high date to Oct 16 (FTEC_calc.py).</p><cite><a href="https://www.roic.ai/news/us-chip-stocks-slide-as-ai-financing-fears-and-chinese-competition-mount-10-13-2026" target="_blank" rel="noopener">Roic News: US chip stocks slide as AI financing fears and Chinese competition mount</a></cite></li><li><div class="drv-head"><strong>Strategist downgrades and rotation out of crowded tech</strong><time>2026-10-14</time></div><p>RBC Capital Markets cut technology to market weight and favored health care, citing slowing semiconductor earnings-revision momentum. Deutsche Bank had warned the prior week that the summer rotation into tech was near its peak.</p><cite><a href="https://stocktwits.com/news-articles/markets/equity/rbc-capital-markets-echoes-deutsche-bank-in-asking-clients-to-steer-clear-of-tech-in-medium-term/cZxf6veRBqF" target="_blank" rel="noopener">Stocktwits: RBC Capital Markets Echoes Deutsche Bank In Asking Clients To Steer Clear Of Tech In Medium Term</a></cite></li><li><div class="drv-head"><strong>Friday chip rout caps the worst Nasdaq week since June (Oct 16)</strong><time>2026-10-16</time></div><p>On Oct 16 SOXX fell 4.14% and XLK 3.03%, with AMD -5.96%, INTC -5.79%, MU -5.63%, AVGO -4.53%, and the Nasdaq -2.15% (-4.48% for the week). Coverage attributed the move mainly to AI-financing worries rather than yields, which eased to 5.09%, while December hike odds stood at 74.3%. FTEC fell 2.92% that day; Robinhood closes reproduce the single-stock moves (FTEC_calc.py).</p><cite><a href="https://ts2.tech/en/nasdaq-drops-2-1-as-chip-rout-caps-a-4-5-weekly-slide/" target="_blank" rel="noopener">TS2: Nasdaq drops 2.1% as chip rout caps a 4.5% weekly slide</a></cite></li><li><div class="drv-head"><strong>Mega-cap ballast limited the damage; semis carried the decline</strong><time>2026-10-06 to 2026-10-16</time></div><p>Approximate attribution (constant 10/16 weights x price change, 2026-10-06 to 2026-10-16 closes): NVDA alone took about -1.83 pts of FTEC&#x27;s -8.55%. AAPL added about +0.50 pts and MSFT was flat (-0.01 pts). Top-20 holdings explain about -5.48 pts, and the rest of the fund about -3.07 pts. Chip-equipment names fell steeply: AMAT -22.81%, LRCX -20.95%, KLAC -16.06%.</p><cite>FTEC_calc.py on mcp__robinhood__get_equity_historicals closes + mcp__AlphaVantage__ETF_PROFILE weights</cite></li></ol>
+
+  <div class="cases">
+    <div class="bull"><h3>Bull case</h3><ul class='case'><li><strong>AI chip demand and earnings are still growing fast</strong><span>Nvidia, FTEC&#x27;s largest holding at 17.45%, reported fiscal Q2 2027 revenue of $96.2B (+106% y/y), data-center revenue of $89.0B, and guided Q3 to about $108B. The selloff came on sentiment, not a reported earnings miss.</span><cite><a href="https://www.iphoneincanada.ca/2026/08/27/nvidia-blows-past-expectations-with-96-2-billion-revenue-in-q2-2027/" target="_blank" rel="noopener">iPhone in Canada: Nvidia Blows Past Expectations with $96.2 Billion Revenue in Q2 2027 (2026-08-27)</a></cite></li><li><strong>Supply-chain bellwether guided well above expectations mid-selloff</strong><span>TSMC Q3 2026 revenue was $46.7B (+41%, above the $44.9B expected), with Q4 guidance of $52.3-54.3B against $49.1B expected. Management&#x27;s AI-demand growth target of mid-to-high 50s% a year through 2029 is seen as possibly conservative.</span><cite><a href="https://www.hl.co.uk/shares/share-research/tsmc-q3-results-strong-quarter-record-guidance" target="_blank" rel="noopener">Hargreaves Lansdown: TSMC Q3 results - strong quarter, record guidance (2026-10-15)</a></cite></li><li><strong>Industry leaders still see compute demand outrunning supply</strong><span>In the same remarks that flagged financing risk, Broadcom&#x27;s CEO said he expects computing demand to exceed supply through 2029, possibly into 2030. Intel&#x27;s CEO sees strong AI-infrastructure demand for the next two to three years.</span><cite><a href="https://www.benzinga.com/markets/tech/26/10/62295019" target="_blank" rel="noopener">Benzinga (2026-10-12)</a></cite></li><li><strong>Shallow pullback within a strong trend</strong><span>Even after the drop, FTEC is +26.17% YTD, +26.70% over one year, and 43.04% above its 52-week low. The current drawdown (-9.10%) is smaller than the Jan-Mar 2026 closing drawdown of -13.75% that preceded a 55.41% rally (FTEC_calc.py).</span><cite>FTEC_calc.py on mcp__robinhood__get_equity_historicals daily data</cite></li><li><strong>Low-cost, broad tech exposure with mega-cap ballast</strong><span>The expense ratio is 0.084% (Fidelity fact sheet, 2026-09-30) and the fund holds hundreds of names from mega to small cap. During this selloff AAPL (+2.95%) and MSFT (-0.05%), about 28.7% of the fund, offset part of the semiconductor losses (FTEC_calc.py).</span><cite><a href="https://institutional.fidelity.com/app/proxy/content?literatureURL=%2F9585932.PDF" target="_blank" rel="noopener">Fidelity MSCI Information Technology Index ETF fact sheet (as of 2026-09-30)</a></cite></li></ul></div>
+    <div class="bear"><h3>Bear case</h3><ul class='case'><li><strong>Heavy concentration in three stocks</strong><span>NVDA, AAPL and MSFT are 46.14% of the fund and the top 10 are 64.26% (ETF_PROFILE as of 2026-10-16). NVDA&#x27;s 10.50% fall since the high alone cost about 1.83 pts of FTEC&#x27;s 8.55% decline (FTEC_calc.py).</span><cite>mcp__AlphaVantage__ETF_PROFILE + FTEC_calc.py</cite></li><li><strong>Rich valuation leaves little room for disappointment</strong><span>Robinhood fundamentals show FTEC at a P/E of 38.50 and a P/B of 11.44 (market date 2026-10-16; basis not stated, likely trailing). UBS framed the chip drop as a reassessment of expectations, and Bloomberg-cited coverage named elevated valuations as one reason.</span><cite><a href="https://cryptobriefing.com/semiconductor-stocks-lose-1-trillion-ai-fears/" target="_blank" rel="noopener">mcp__robinhood__get_equity_fundamentals; Crypto Briefing: Chip-stock index faces $1 trillion loss as AI concerns deepen (2026-10-14)</a></cite></li><li><strong>Inflation and rates moving the wrong way</strong><span>September CPI was 3.7% y/y, above the 3.6% forecast, and the 10-year yield is above 5% (5.09% on Oct 16). Market-implied odds of a December Fed hike reached 74.3%, up from 50.2% a month earlier, which raises the cost of capital for long-duration tech and debt-funded AI build-outs.</span><cite><a href="https://ts2.tech/en/nasdaq-drops-2-1-as-chip-rout-caps-a-4-5-weekly-slide/" target="_blank" rel="noopener">TS2: Nasdaq drops 2.1% as chip rout caps a 4.5% weekly slide (2026-10-16)</a></cite></li><li><strong>AI capex may be outrunning its funding and returns</strong><span>AI-related debt issuance fell to $23B in September from $113B in June (Morgan Stanley via FT). Broadcom is backstopping some customer lease obligations, with up to $29B exposure on its first deal. A Gartner estimate puts AI-provider investment near $7T through 2030 against at most $3.6T of AI revenue.</span><cite><a href="https://www.benzinga.com/markets/tech/26/10/62295019 ; https://news.cgtn.com/news/2026-10-15/Hot-US-inflation-rising-AI-costs-spark-global-chip-stock-rout-1RgbacuNxwA/share_amp.html" target="_blank" rel="noopener">Benzinga (2026-10-12); CGTN: Hot US inflation, rising AI costs spark global chip-stock rout (2026-10-15)</a></cite></li><li><strong>Memory-cycle and China-competition risk, plus waning analyst support</strong><span>CXMT&#x27;s reported breakthrough raised memory-oversupply fears. FTEC&#x27;s memory names (MU 3.93% + SNDK 0.81% weight) fell 16-22% from the high. RBC downgraded tech to market weight on Oct 14, citing slowing semiconductor estimate revisions.</span><cite><a href="https://www.roic.ai/news/chip-stocks-slump-as-inflation-fears-and-ai-financing-doubts-mount-10-15-2026 ; https://stocktwits.com/news-articles/markets/equity/rbc-capital-markets-echoes-deutsche-bank-in-asking-clients-to-steer-clear-of-tech-in-medium-term/cZxf6veRBqF" target="_blank" rel="noopener">Roic News (2026-10-15): Chip stocks slump as inflation fears and AI financing doubts mount; Stocktwits (2026-10-14)</a></cite></li></ul></div>
+  </div>
+
+  <details>
+    <summary>Top holdings, data gaps and calculation log</summary>
+    <h4>Top holdings</h4>
+    <div class="tblwrap"><table class="hold"><thead><tr><th>Symbol</th><th>Holding</th><th class="num">Weight</th></tr></thead><tbody><tr><td>NVDA</td><td>NVIDIA Corp</td><td class="num">17.45%</td></tr><tr><td>AAPL</td><td>Apple Inc</td><td class="num">16.79%</td></tr><tr><td>MSFT</td><td>Microsoft Corp</td><td class="num">11.90%</td></tr><tr><td>AVGO</td><td>Broadcom Inc</td><td class="num">4.15%</td></tr><tr><td>MU</td><td>Micron Technology Inc</td><td class="num">3.93%</td></tr><tr><td>AMD</td><td>Advanced Micro Devices Inc</td><td class="num">3.53%</td></tr><tr><td>CSCO</td><td>Cisco Systems Inc</td><td class="num">1.74%</td></tr><tr><td>PLTR</td><td>Palantir Technologies Inc</td><td class="num">1.71%</td></tr><tr><td>INTC</td><td>Intel Corp</td><td class="num">1.66%</td></tr><tr><td>LRCX</td><td>Lam Research Corp</td><td class="num">1.40%</td></tr></tbody></table></div><p class="src">Holdings: mcp__AlphaVantage__ETF_PROFILE (retrieved 2026-10-18T20:21:48Z); top-3 = 46.14%, top-10 = 64.26% per FTEC_calc.py. Fidelity fact sheet (2026-09-30) shows a similar list with slightly different weights. · as of 2026-10-16 (AlphaVantage last_updated 2026-10-16 00:01 UTC)</p>
+    <h4>Data gaps</h4>
+    <ul class='gaps'><li>mcp__AlphaVantage__TIME_SERIES_DAILY outputsize=full is premium-only (refused). The primary daily series is mcp__robinhood__get_equity_historicals (day, regular session, split-adjusted, 2025-10-01..2026-10-16, 263 rows). It was validated against AlphaVantage compact daily (100 sessions, 0 mismatches) and AlphaVantage weekly (54 weeks, 0 high/low/close mismatches; 6 weeks show &lt;0.1% volume differences).</li><li>mcp__AlphaVantage__NEWS_SENTIMENT is premium-only (refused), so the news drivers come from WebSearch/WebFetch.</li><li>Fidelity&#x27;s retail product page (digital.fidelity.com) returned only a navigation shell. Fund facts come from Fidelity&#x27;s institutional fact-sheet PDF (as of 2026-09-30) and AlphaVantage ETF_PROFILE.</li><li>Returns are price-only and exclude dividends (Robinhood shows a 0.41% yield, paid quarterly).</li><li>Holding attribution is approximate: constant 2026-10-16 weights x close-to-close price change, top 20 holdings only (73.91% of the fund). The -3.07 pt remainder is the residual, not verified holding by holding.</li><li>Holding weights differ by source and date: AlphaVantage (2026-10-16) has AAPL at 16.79% and MU at 3.93%, while the Fidelity fact sheet (2026-09-30) has AAPL at 15.94% and MU at 4.47%.</li><li>AlphaVantage SPLITS returned no split events for FTEC; the Robinhood series is split-adjusted, so no adjusted/unadjusted mixing is expected.</li><li>Several news items come from aggregator or secondary sites (roic.ai, ts2.tech, stocktwits, heygotrade) citing Bloomberg, Reuters, AP, CNBC or the FT secondhand; the primary wire stories were not fetched. One roic.ai article (dated 2026-10-15) is ambiguous about which session it describes.</li><li>The CXMT memory breakthrough was not verified against a primary source.</li><li>The basis of Robinhood&#x27;s FTEC P/E (38.50) is not stated (likely trailing) and was not cross-checked.</li><li>Robinhood get_equity_quotes reported 2026-10-15 as the last completed-session close (292.00) even though the 2026-10-16 session had finished. The official 2026-10-16 close of 283.46 comes from AlphaVantage GLOBAL_QUOTE and daily data and matches the Robinhood daily bar.</li></ul>
+    <h4>Calculation output</h4>
+    <pre>rows=263 first=2025-10-01 last=2026-10-16 OHLC-inconsistent rows=0
+AV compact overlap: 100 sessions (2026-05-27..2026-10-16), mismatches=0
+  weekly volume diff wk-ending 2025-11-07: daily-agg=1921195 AVweekly=1920720 (RH regular-session vs AV consolidated)
+  weekly volume diff wk-ending 2025-12-12: daily-agg=1317672 AVweekly=1316688 (RH regular-session vs AV consolidated)
+  weekly volume diff wk-ending 2026-01-23: daily-agg=1541722 AVweekly=1540816 (RH regular-session vs AV consolidated)
+  weekly volume diff wk-ending 2026-01-30: daily-agg=4134226 AVweekly=4133013 (RH regular-session vs AV consolidated)
+  weekly volume diff wk-ending 2026-02-06: daily-agg=2438862 AVweekly=2437095 (RH regular-session vs AV consolidated)
+  weekly volume diff wk-ending 2026-05-22: daily-agg=1512761 AVweekly=1511749 (RH regular-session vs AV consolidated)
+AV weekly check: 54 weeks compared, high/low/close mismatches=0
+
+last_trading_date        = 2026-10-16
+window                   = 2025-10-16 .. 2026-10-16 (252 sessions; start bound 2025-10-16)
+current (last close)     = 283.46
+high_52w_intraday        = 311.8300 on 2026-10-06
+high_52w_close           = 309.95 on 2026-10-06
+low_52w_intraday         = 198.1700 on 2026-03-30
+low_52w_close            = 199.44 on 2026-03-30
+drop_pct_from_intraday_high = -9.0979%
+drop_pct_from_closing_high  = -8.5465%
+drop_dollars (vs intraday)  = -28.3700
+drop_dollars (vs close hi)  = -26.4900
+trading_days_since_intraday_high = 8
+trading_days_since_close_high    = 8
+rise from 52w low to intraday high = 57.3548%
+current vs 52w intraday low        = 43.0388%
+
+return_1m (21 sessions, base 2026-09-17 close 290.02) = -2.2619%
+return_3m (63 sessions, base 2026-07-20 close 270.28) = 4.8764%
+return_ytd (base 2025-12-31 close 224.67) = 26.1673%
+return_1y (base 2025-10-16 close 223.73, last close on/before 2025-10-16) = 26.6974%
+
+Closes from intraday-high date to last date:
+  2026-10-06  close 309.95  day +0.49%
+  2026-10-07  close 308.92  day -0.33%
+  2026-10-08  close 303.76  day -1.67%
+  2026-10-09  close 305.37  day +0.53%
+  2026-10-12  close 301.92  day -1.13%
+  2026-10-13  close 301.79  day -0.04%
+  2026-10-14  close 293.08  day -2.89%
+  2026-10-15  close 292.00  day -0.37%
+  2026-10-16  close 283.46  day -2.92%
+week of 2026-10-12..16: prior Fri close 305.37 -&gt; 283.46 = -7.1749%
+Q1-2026 context: closing high 231.23 (2026-01-28) -&gt; closing low 199.44 (2026-03-30) = -13.7482%
+rally from 2026-03-30 close 199.44 to closing high 309.95 = 55.4101%
+
+AV GLOBAL_QUOTE price 283.46 vs daily close 283.46: diff +0.0000%
+RH last_trade_price 283.62 vs official close 283.46: diff +0.0564%
+RH high_52_weeks 311.83 vs computed 311.83: diff +0.0000%
+RH low_52_weeks 198.17 vs computed 198.17: diff +0.0000%
+top-3 weight = 46.14%  top-10 weight = 64.26%
+wrote FTEC_weekly.csv with 53 weekly closes
+
+Top-20 holdings, 2026-10-06 close -&gt; 2026-10-16 close (approx. contribution = weight x return):
+  NVDA  w=17.45%     239.24 -&gt;    214.13   -10.50%  contrib -1.832 pts   | wk 10/09-&gt;10/16   -6.61%
+  AAPL  w=16.79%     333.63 -&gt;    343.46    +2.95%  contrib +0.495 pts   | wk 10/09-&gt;10/16   +2.03%
+  MSFT  w=11.90%     529.30 -&gt;    529.05    -0.05%  contrib -0.006 pts   | wk 10/09-&gt;10/16   -1.13%
+  AVGO  w= 4.15%     375.81 -&gt;    328.75   -12.52%  contrib -0.520 pts   | wk 10/09-&gt;10/16   -9.07%
+  MU    w= 3.93%    1045.56 -&gt;    878.84   -15.95%  contrib -0.627 pts   | wk 10/09-&gt;10/16  -14.59%
+  AMD   w= 3.53%     649.42 -&gt;    528.75   -18.58%  contrib -0.656 pts   | wk 10/09-&gt;10/16  -13.05%
+  CSCO  w= 1.74%     117.94 -&gt;    107.39    -8.95%  contrib -0.156 pts   | wk 10/09-&gt;10/16   -9.29%
+  PLTR  w= 1.71%     192.07 -&gt;    186.03    -3.14%  contrib -0.054 pts   | wk 10/09-&gt;10/16  -11.01%
+  INTC  w= 1.66%     112.50 -&gt;     89.85   -20.13%  contrib -0.334 pts   | wk 10/09-&gt;10/16  -14.18%
+  LRCX  w= 1.40%     333.89 -&gt;    263.94   -20.95%  contrib -0.293 pts   | wk 10/09-&gt;10/16  -17.22%
+  AMAT  w= 1.38%     530.27 -&gt;    409.29   -22.81%  contrib -0.315 pts   | wk 10/09-&gt;10/16  -19.28%
+  PANW  w= 1.20%     419.91 -&gt;    342.00   -18.55%  contrib -0.223 pts   | wk 10/09-&gt;10/16  -18.33%
+  TXN   w= 1.01%     297.23 -&gt;    276.48    -6.98%  contrib -0.071 pts   | wk 10/09-&gt;10/16   -2.56%
+  CRWD  w= 0.99%     278.86 -&gt;    227.39   -18.46%  contrib -0.183 pts   | wk 10/09-&gt;10/16  -17.32%
+  KLAC  w= 0.92%     197.46 -&gt;    165.74   -16.06%  contrib -0.148 pts   | wk 10/09-&gt;10/16  -15.25%
+  ANET  w= 0.84%     215.36 -&gt;    176.98   -17.82%  contrib -0.150 pts   | wk 10/09-&gt;10/16  -18.34%
+  ORCL  w= 0.84%     144.77 -&gt;    128.23   -11.43%  contrib -0.096 pts   | wk 10/09-&gt;10/16   -9.31%
+  MRVL  w= 0.84%     287.01 -&gt;    227.83   -20.62%  contrib -0.173 pts   | wk 10/09-&gt;10/16  -17.24%
+  IBM   w= 0.82%     221.29 -&gt;    232.14    +4.90%  contrib +0.040 pts   | wk 10/09-&gt;10/16   +2.21%
+  SNDK  w= 0.81%    1660.46 -&gt;   1299.30   -21.75%  contrib -0.176 pts   | wk 10/09-&gt;10/16  -17.86%
+  top-10 approx contribution = -3.982 pts; top-20 (weight 73.91%) = -5.475 pts
+  FTEC close-to-close 2026-10-06 -&gt; 2026-10-16: -8.5465%; remainder from other holdings ~ -3.072 pts
+
+AlphaVantage-only check: weekly bars ending 2025-10-17..2026-10-16 -&gt; max high 311.83 (week ending 2026-10-09), min low 198.17 (week ending 2026-04-02); compact daily max high 311.83 on 2026-10-06
+  note: first AV weekly bar (week ending 2025-10-17) includes 2025-10-13..15, which predate the window start
+  NVDA  2026-10-14: 228.52 -&gt; 221.3 = -3.16%
+  AMD   2026-10-16: 562.23 -&gt; 528.75 = -5.95%
+  INTC  2026-10-16: 95.37 -&gt; 89.85 = -5.79%
+  MU    2026-10-16: 931.24 -&gt; 878.84 = -5.63%
+  AVGO  2026-10-16: 344.33 -&gt; 328.75 = -4.52%
+  AAPL  2026-10-16: 342.0 -&gt; 343.46 = +0.43%
+AAPL+MSFT combined weight = 28.69%
+</pre>
+  </details>
+</section>
+<section class="fund" id="qqq">
+  <header class="fund-head">
+    <div>
+      <h2><span class="tkr">QQQ</span> Invesco QQQ Trust, Series 1</h2>
+      <p class="meta">Invesco (Invesco Capital Management LLC) · Tracks Nasdaq-100 Index · Expense ratio 0.18%</p>
+    </div>
+    <div class="drop-badge"><span class="big">-6.96%</span><span>from 52-wk high</span></div>
+  </header>
+
+  <dl class="facts">
+    <div><dt>Last close</dt><dd>$709.80</dd><small>2026-10-16</small></div>
+    <div><dt>52-wk high (intraday)</dt><dd>$762.86</dd><small>2026-10-06</small></div>
+    <div><dt>Below high</dt><dd>$53.06</dd><small>-6.56% vs closing high</small></div>
+    <div><dt>52-wk low</dt><dd>$555.60</dd><small>2026-03-30</small></div>
+  </dl>
+
+  <figure><svg viewBox="0 0 640 200" class="spark" role="img" aria-label="Weekly closes over the past 52 weeks against the 52-week high">
+  <line x1="52" x2="626" y1="154.0" y2="154.0" class="grid"/><text x="46" y="157.5" class="axis" text-anchor="end">572</text><line x1="52" x2="626" y1="114.0" y2="114.0" class="grid"/><text x="46" y="117.5" class="axis" text-anchor="end">630</text><line x1="52" x2="626" y1="74.0" y2="74.0" class="grid"/><text x="46" y="77.5" class="axis" text-anchor="end">688</text><line x1="52" x2="626" y1="34.0" y2="34.0" class="grid"/><text x="46" y="37.5" class="axis" text-anchor="end">746</text>
+  <polygon points="52.0,174 52.0,132.1 63.0,123.0 74.1,114.8 85.1,128.1 96.2,128.7 107.2,141.7 118.2,121.6 129.3,117.3 140.3,125.4 151.3,123.1 162.4,118.4 173.4,125.8 184.5,116.5 195.5,120.2 206.5,119.2 217.6,119.8 228.6,128.2 239.7,133.5 250.7,128.8 261.7,129.8 272.8,135.0 283.8,139.2 294.8,147.2 305.9,160.6 316.9,145.2 328.0,127.2 339.0,101.2 350.0,90.8 361.1,83.7 372.1,58.2 383.2,59.7 394.2,53.8 405.2,39.5 416.3,62.4 427.3,51.2 438.3,37.9 449.4,61.4 460.4,57.2 471.5,48.3 482.5,69.1 493.5,76.8 504.6,74.2 515.6,50.0 526.7,44.5 537.7,56.6 548.7,54.6 559.8,52.8 570.8,55.6 581.8,51.1 592.9,35.2 603.9,31.7 615.0,30.6 626.0,59.1 626.0,174" class="area"/>
+  <polyline points="52.0,132.1 63.0,123.0 74.1,114.8 85.1,128.1 96.2,128.7 107.2,141.7 118.2,121.6 129.3,117.3 140.3,125.4 151.3,123.1 162.4,118.4 173.4,125.8 184.5,116.5 195.5,120.2 206.5,119.2 217.6,119.8 228.6,128.2 239.7,133.5 250.7,128.8 261.7,129.8 272.8,135.0 283.8,139.2 294.8,147.2 305.9,160.6 316.9,145.2 328.0,127.2 339.0,101.2 350.0,90.8 361.1,83.7 372.1,58.2 383.2,59.7 394.2,53.8 405.2,39.5 416.3,62.4 427.3,51.2 438.3,37.9 449.4,61.4 460.4,57.2 471.5,48.3 482.5,69.1 493.5,76.8 504.6,74.2 515.6,50.0 526.7,44.5 537.7,56.6 548.7,54.6 559.8,52.8 570.8,55.6 581.8,51.1 592.9,35.2 603.9,31.7 615.0,30.6 626.0,59.1" class="line" fill="none"/>
+  <line x1="52" x2="626" y1="22.6" y2="22.6" class="hiline"/>
+  <text x="626" y="17.6" class="hilabel" text-anchor="end">52-wk high 762.86</text>
+  <circle cx="626.0" cy="59.1" r="4" class="endpt"/>
+  <text x="52.0" y="192" class="axis" text-anchor="start">2025-10-17</text><text x="339.0" y="192" class="axis" text-anchor="middle">2026-04-17</text><text x="626.0" y="192" class="axis" text-anchor="end">2026-10-16</text>
+</svg>
+    <figcaption>Weekly closes, trailing 52 weeks. Dashed line = 52-week intraday high.</figcaption>
+  </figure>
+
+  <dl class="rets"><div><dt>1 month</dt><dd class="neg">-0.99%</dd></div><div><dt>3 months</dt><dd class="pos">+1.97%</dd></div><div><dt>YTD</dt><dd class="pos">+15.54%</dd></div><div><dt>1 year</dt><dd class="pos">+18.30%</dd></div></dl>
+  <p class="src">Price source: Robinhood mcp__robinhood__get_equity_historicals (day, split-adjusted, regular session) last bar close; matches StockAnalysis.com and finanzen.net last close of 709.80 · retrieved 2026-10-18T20:21:46Z. 52-wk high source: Python max(high) over Robinhood daily bars 2025-10-16..2026-10-16; equals Robinhood get_equity_fundamentals high_52_weeks=762.86 dated 2026-10-06 · retrieved 2026-10-18T20:21:46Z.</p>
+  <p class="src">Cross-check (Robinhood mcp__robinhood__get_equity_quotes plus get_equity_fundamentals; web: StockAnalysis.com/etf/qqq, finanzen.net, 2026-10-18T20:21:46Z): price $709.86, 52-wk high $762.86 — Robinhood quote last_trade_price is 709.86 (last regular-session print at 19:59:59 UTC on 10-16), 0.008% above the 709.80 bar close. StockAnalysis.com and finanzen.net both show a 709.80 close. The Robinhood quote&#x27;s &#x27;close&#x27; field still reported 2026-10-15 (728.00) at retrieval time. The 52-week high of 762.86 on 2026-10-06 and low of 555.60 on 2026-03-30 match Robinhood fundamentals and StockAnalysis exactly. No disagreement above 0.5% on price or high. Caveat: the primary series and the main cross-check both come from Robinhood, because Alpha Vantage was unavailable; the web quotes are the only independent check on price. Separately, the two sources&#x27; P/E figures differ by about 17.6% (Robinhood 34.15 vs StockAnalysis 29.05), probably because they use different methods.</p>
+
+  <h3>What drove the drop</h3>
+  <p class="summary">QQQ hit a record on 2026-10-06 (762.86 intraday, 759.66 close) and closed at 709.80 on 2026-10-16, which is 6.96% below the intraday high and 6.56% below the closing high. That is a pullback, not a bear market: the fund is still up 15.54% YTD and 27.75% above its March low. Most of the drop came in the week of Oct 12-16 (-5.52%). It was led by chip stocks (AMD -18.6%, MU -16.0%, NVDA -10.5% from Oct 6 to Oct 16) as doubts grew about AI-capex payback and debt funding, China&#x27;s CXMT made memory-competition news, and hot CPI/PPI data lifted odds of a December Fed hike with the 10-year yield near 5.1-5.3%.</p>
+  <ol class="drivers"><li><div class="drv-head"><strong>AI chip selloff: semis led the decline</strong><time>2026-10-06 to 2026-10-16</time></div><p>From the Oct 6 high to the Oct 16 close, AMD fell 18.58%, MU 15.95%, AVGO 12.52% and NVDA 10.50%, while AAPL rose 2.95% and MSFT was flat (Robinhood daily closes, computed in QQQ_calc.py). NVDA, MU and AMD alone account for roughly 2.5 of QQQ&#x27;s 6.6-point drop by back-of-envelope weighting. On Oct 14 a chip index fell 4.3%, about 12% over six sessions, on worries about rates, valuations and AI infrastructure costs.</p><cite><a href="https://www.swissinfo.ch/eng/stocks,-bonds-fall-as-cpi-data-fuel-fed-hike-bets:-markets-wrap/92211728" target="_blank" rel="noopener">Stocks, Bonds Fall as CPI Data Fuel Fed Hike Bets: Markets Wrap (Bloomberg via Swissinfo)</a></cite></li><li><div class="drv-head"><strong>Doubts about AI capex payback and debt-funded spending (Broadcom CEO remarks; CoreWeave credit stress)</strong><time>2026-10-12 to 2026-10-16</time></div><p>On Oct 12 Broadcom CEO Hock Tan said many AI investors don&#x27;t understand what they own and compared the mood to a casino. On Oct 14 CoreWeave bonds traded at yields near 15% (distressed levels), the stock fell about 16%, and Oracle, Nebius and Dell sold off with it. Per LSEG, Alphabet, Amazon, Meta and Oracle have issued more than $228B of bonds this year. The Oct 16 AP wrap said investors doubt big tech can keep borrowing to fund AI as yields rise.</p><cite><a href="https://investinglive.com/stocks/coreweave-bonds-trade-like-distressed-debt-as-ai-spending-outpaces-balance-sheets/" target="_blank" rel="noopener">CoreWeave bonds trade like distressed debt as AI spending outpaces balance sheets (investingLive)</a></cite></li><li><div class="drv-head"><strong>China memory competition (CXMT 4F2 DRAM) hit memory names</strong><time>2026-10-12 to 2026-10-13</time></div><p>Over the Oct 10-11 weekend CXMT said it had made key progress on a denser 4F2 DRAM design and aims to ship server DDR5 on it by end-2026. Micron fell about 3.9% on Oct 12 and kept sliding. SK Hynix, Samsung and Kioxia fell sharply in Asia on Oct 13. MU is QQQ&#x27;s #4 holding at a 4.32% weight.</p><cite><a href="https://247wallst.com/investing/2026/10/13/micron-falls-5-as-chinas-cxmt-targets-server-memory-sandisk-drops-4/" target="_blank" rel="noopener">Micron Falls 5% as China&#x27;s CXMT Targets Server Memory; SanDisk Drops 4% (24/7 Wall St.)</a></cite></li><li><div class="drv-head"><strong>Hot September CPI and PPI raised December Fed-hike odds</strong><time>2026-10-14 to 2026-10-15</time></div><p>September CPI (out Oct 14) came in at 3.7% y/y vs 3.6% expected, with core at 2.6% vs 2.5%. QQQ fell 1.97% that day, its worst session since July per Bloomberg. PPI (out Oct 15) jumped 1.3% m/m and 6.3% y/y, the largest annual rise since Dec 2022. Per the AP, December hike odds rose to 74.3% from 50.2% a month earlier. This follows the Fed&#x27;s 25bp hike on Sept 16 to 3.75-4.00%, its first since 2023.</p><cite><a href="https://investinglive.com/news/us-september-cpi-vs-3-6-expected-0/" target="_blank" rel="noopener">US September CPI 3.7% vs 3.6% expected (investingLive); Wholesale inflation jumped by most in four years (AP via Spectrum News)</a></cite></li><li><div class="drv-head"><strong>High long-term yields and oil from the US-Iran war</strong><time>2026-10-08 to 2026-10-16</time></div><p>The 10-year Treasury yield topped 5.30% earlier in October (highest since 2002) and was 5.09% on Oct 16. Brent rose 3.7% to $109.86 on Oct 16 and about 4% on Oct 8, after remarks implying the Iran conflict would last past the midterms. That lifted hike odds and coincided with a defensive rotation into energy and staples while tech (XLK) fell 2.09% on Oct 8.</p><cite><a href="https://www.ajc.com/news/2026/10/us-markets-weighed-down-by-extended-sell-off-in-the-tech-sector/" target="_blank" rel="noopener">US markets weighed down by extended sell-off in the tech sector (AP via AJC)</a></cite></li><li><div class="drv-head"><strong>Broad Oct 16 tech selloff to cap the week</strong><time>2026-10-16</time></div><p>On Oct 16 QQQ fell 2.50% (Robinhood daily data). Per the AP, the Nasdaq composite lost 2.1% and posted its worst week since June. AMD fell 6%, Intel 5.8%, Micron 5.6%, Broadcom 4.5%, Meta 3.7% and Alphabet 2.5%. Only 7 of 75 S&amp;P tech stocks rose that day.</p><cite><a href="https://www.ajc.com/news/2026/10/us-markets-weighed-down-by-extended-sell-off-in-the-tech-sector/" target="_blank" rel="noopener">US markets weighed down by extended sell-off in the tech sector (AP via AJC)</a></cite></li></ol>
+
+  <div class="cases">
+    <div class="bull"><h3>Bull case</h3><ul class='case'><li><strong>AI demand signals from the supply chain are still strong</strong><span>ASML (Oct 14) said customers are raising equipment demand forecasts, some want to order for 2029-2030, and planned supply for 2027-2028 won&#x27;t fully meet demand. TSMC (Oct 15) reported Q3 revenue of $46.72B (+41.2% y/y), a 66.4% gross margin, and Q4 guidance of $52.3-54.3B.</span><cite><a href="https://www.sec.gov/Archives/edgar/data/0001046179/000104617926000726/a3q26e_withguidancexfinal.htm" target="_blank" rel="noopener">ASML Q3 2026 press release (SEC 6-K); TSMC Q3 2026 results (SEC 6-K)</a></cite></li><li><strong>Earnings estimates are still rising, led by tech</strong><span>Zacks (Oct 12) expects S&amp;P 500 Q3 earnings up 24.3% y/y with Tech up 43.3%, and says estimate revisions have been positive and broad-based for almost a year, with 2027 estimates also rising.</span><cite><a href="https://www.fxstreet.com/news/estimates-keep-rising-as-q3-earnings-season-takes-center-stage-202610120625" target="_blank" rel="noopener">Estimates keep rising as Q3 earnings season takes center stage (Zacks via FXStreet)</a></cite></li><li><strong>The drawdown is modest and the longer trend is intact</strong><span>QQQ is 6.96% below its intraday high, still up 15.54% YTD and 18.30% over one year, and 27.75% above its 2026-03-30 low (Robinhood data, QQQ_calc.py). Non-chip mega caps held up: AAPL rose 2.95% and MSFT was flat from Oct 6 to Oct 16.</span><cite>Robinhood get_equity_historicals (QQQ, holdings); QQQ_calc.py output</cite></li><li><strong>Near-term catalysts are close: mega-cap earnings in late October</strong><span>Tesla reports Oct 21; Alphabet, Meta and Microsoft Oct 28; Amazon Oct 29; Apple Nov 2; Nvidia around Nov 18. Brooke Thackray says strong Mag 7 results could restart the rally.</span><cite><a href="https://www.bnnbloomberg.ca/investing/opinion/2026/10/15/technology-earnings-are-the-make-or-break-event-for-q3-earnings-brooke-thackray/" target="_blank" rel="noopener">Technology earnings are the make or break event for Q3 earnings (BNN Bloomberg, Brooke Thackray)</a></cite></li></ul></div>
+    <div class="bear"><h3>Bear case</h3><ul class='case'><li><strong>Rates moving the wrong way for long-duration growth stocks</strong><span>The Fed hiked 25bp on Sept 16 to 3.75-4.00%, and most officials see another hike likely by year-end. Hot CPI and PPI pushed December hike odds to 74.3% (AP). The 10-year yield topped 5.30% in October, the highest since 2002.</span><cite><a href="https://tradingeconomics.com/united-states/interest-rate/news/584300" target="_blank" rel="noopener">Fed Raises Rates for 1st Time Since 2023 (Trading Economics); AP market wrap Oct 16</a></cite></li><li><strong>Rich valuation leaves little room for disappointment</strong><span>Robinhood fundamentals show QQQ at a P/E of 34.15 and P/B of 9.22. StockAnalysis shows a trailing P/E of 29.05 and forward P/E of 21.57 (the methods differ). Thackray warns Q3 tech results below the high bar could be a serious problem, and that earnings growth should slow toward Q2 2027 as base effects reverse.</span><cite><a href="https://stockanalysis.com/etf/qqq/" target="_blank" rel="noopener">Robinhood get_equity_fundamentals; StockAnalysis.com QQQ; BNN Bloomberg (Thackray)</a></cite></li><li><strong>Heavy concentration in a few AI-linked names</strong><span>The top 10 holdings make up 46.94% of the fund (StockAnalysis, 2026-10-16). NVDA, MU and AMD alone are 16.22%, and those three explain roughly 2.5 of the 6.6-point drop since the high (QQQ_calc.py).</span><cite><a href="https://www.stockanalysis.com/etf/qqq/holdings" target="_blank" rel="noopener">StockAnalysis.com QQQ holdings; QQQ_calc.py output</a></cite></li><li><strong>AI build-out increasingly funded by debt, with credit stress showing at the edges</strong><span>Per LSEG, Alphabet, Amazon, Meta and Oracle had issued more than $228B in bonds this year as of Oct 13, more than double their 2025 total. CoreWeave debt traded near 15% yields on Oct 14. JPMorgan sees hyperscaler capex near $800B this year and above $1T/yr by 2027.</span><cite><a href="https://investinglive.com/stocks/coreweave-bonds-trade-like-distressed-debt-as-ai-spending-outpaces-balance-sheets/" target="_blank" rel="noopener">CoreWeave bonds trade like distressed debt as AI spending outpaces balance sheets (investingLive)</a></cite></li><li><strong>New competitive threat in memory from China</strong><span>Counterpoint data cited by BabyPips shows CXMT reached 10% of global DRAM revenue in Q2 2026, up from 4% a year earlier, and it is targeting high-margin server DDR5. Micron is now QQQ&#x27;s #4 holding (4.32%).</span><cite><a href="https://www.babypips.com/news/headline-chip-stocks-october-2026-broadcom-casino-comment-cxmt-dram" target="_blank" rel="noopener">Chip stocks October 2026: Broadcom casino comment, CXMT DRAM (BabyPips)</a></cite></li></ul></div>
+  </div>
+
+  <details>
+    <summary>Top holdings, data gaps and calculation log</summary>
+    <h4>Top holdings</h4>
+    <div class="tblwrap"><table class="hold"><thead><tr><th>Symbol</th><th>Holding</th><th class="num">Weight</th></tr></thead><tbody><tr><td>NVDA</td><td>NVIDIA Corp.</td><td class="num">8.14%</td></tr><tr><td>AAPL</td><td>Apple Inc.</td><td class="num">7.91%</td></tr><tr><td>MSFT</td><td>Microsoft Corp.</td><td class="num">6.20%</td></tr><tr><td>MU</td><td>Micron Technology</td><td class="num">4.32%</td></tr><tr><td>AMZN</td><td>Amazon.com</td><td class="num">4.25%</td></tr><tr><td>AMD</td><td>Advanced Micro Devices</td><td class="num">3.76%</td></tr><tr><td>META</td><td>Meta Platforms (Class A)</td><td class="num">3.33%</td></tr><tr><td>GOOGL</td><td>Alphabet (Class A)</td><td class="num">3.15%</td></tr><tr><td>TSLA</td><td>Tesla</td><td class="num">2.94%</td></tr><tr><td>GOOG</td><td>Alphabet (Class C)</td><td class="num">2.94%</td></tr></tbody></table></div><p class="src">Holdings: StockAnalysis.com https://www.stockanalysis.com/etf/qqq/holdings (third-party aggregator; the Invesco holdings page failed to load). Reference: the SEC Form N-CSRS (https://www.sec.gov/Archives/edgar/data/0001067839/000119312526250483/8deb6f921189c0e.htm) as of 2026-03-31 listed NVDA 8.68, AAPL 7.63, MSFT 5.63, AMZN 4.58, TSLA 3.80, META 3.46, WMT 3.44, GOOGL 3.43, GOOG 3.19, AVGO 3.00. Since then MU and AMD have entered the top 10 and AVGO and WMT have dropped out. · as of 2026-10-16</p>
+    <h4>Data gaps</h4>
+    <ul class='gaps'><li>Alpha Vantage was unavailable all session. TIME_SERIES_DAILY with outputsize=full returned a per-second rate limit, then &#x27;premium feature&#x27;. outputsize=compact, GLOBAL_QUOTE and ETF_PROFILE all hit the 25-requests/day limit on the shared key (last attempt about 20:22-20:32 UTC). The primary daily series is therefore Robinhood get_equity_historicals (split-adjusted, regular session), not Alpha Vantage.</li><li>Because the primary series and the main cross-check are both Robinhood, the only independent price checks are web pages (StockAnalysis.com and finanzen.net, both 709.80 on 10-16). StockAnalysis also independently confirms the 52-week high and low.</li><li>QQQ_daily.csv was transcribed from the Robinhood tool output. It was checked against a separate Robinhood weekly call (0 high/low mismatches over 52 weeks) and for OHLC consistency (0 violations).</li><li>The Invesco holdings page failed to load, so the top holdings come from StockAnalysis.com (third party) as of 2026-10-16, cross-referenced to the SEC N-CSRS as of 2026-03-31. AVGO&#x27;s current weight is not in the source&#x27;s top-10 list.</li><li>The holding contribution figures (pp) are rough estimates that back out starting weights from end weights and ignore intra-period rebalancing.</li><li>The Robinhood quote&#x27;s &#x27;close&#x27; field still showed 2026-10-15 (728.00) at retrieval, so the official 10-16 settled close comes from the daily bar plus web sources, not that field.</li><li>P/E is not consistent across sources: Robinhood 34.15 vs StockAnalysis 29.05 (trailing) and 21.57 (forward). Methods differ and neither is the issuer&#x27;s figure.</li><li>Returns are price-only and exclude dividends. No AV NEWS_SENTIMENT data, because the rate limit blocked it.</li><li>The Oct 7 META decline (-2.4%) and the Oct 13 index moves have no single clearly cited cause beyond the general AI/chip sentiment covered above.</li></ul>
+    <h4>Calculation output</h4>
+    <pre>=== QQQ trailing 52-week stats (source: Robinhood daily, split-adjusted) ===
+rows in file: 263  first: 2025-10-01  last: 2026-10-16
+window: 2025-10-16 .. 2026-10-16  (252 trading days)
+current (last close 2026-10-16): 709.80
+high_52w_intraday: 762.86 on 2026-10-06
+high_52w_close:    759.66 on 2026-10-06
+low_52w_intraday:  555.60 on 2026-03-30
+drop_pct_from_intraday_high: -6.96%
+drop_pct_from_closing_high:  -6.56%
+drop_dollars (vs intraday high): -53.06
+trading_days_since_high: 8
+rise from 52w intraday low: 27.75%
+returns (price only, excl. dividends):
+  1m  (21 td, base 2026-09-17 close 716.92): -0.99%
+  3m  (63 td, base 2026-07-20 close 696.06): 1.97%
+  ytd (base 2025-12-31 close 614.31): 15.54%
+  1y  (base 2025-10-16 close 599.99): 18.30%
+
+=== Daily closes since the 52w high ===
+  2026-10-06  close 759.66  day +0.46%  vs closing high +0.00%
+  2026-10-07  close 757.73  day -0.25%  vs closing high -0.25%
+  2026-10-08  close 747.58  day -1.34%  vs closing high -1.59%
+  2026-10-09  close 751.27  day +0.49%  vs closing high -1.10%
+  2026-10-12  close 746.04  day -0.70%  vs closing high -1.79%
+  2026-10-13  close 743.57  day -0.33%  vs closing high -2.12%
+  2026-10-14  close 728.95  day -1.97%  vs closing high -4.04%
+  2026-10-15  close 728.00  day -0.13%  vs closing high -4.17%
+  2026-10-16  close 709.80  day -2.50%  vs closing high -6.56%
+week of 2026-10-12..16: 751.27 (10-09) -&gt; 709.80: -5.52%
+
+weekly closes saved: 53 weeks, 2025-10-17 .. 2026-10-16
+split check: 52 weeks compared (unadjusted weekly vs split-adjusted daily); ratio min 1.000000 max 1.000000 -&gt; NO split detected
+transcription check: 52 weeks; weekly-bar high mismatches 0, low mismatches 0
+
+=== Cross-checks ===
+  price  Robinhood get_equity_quotes last_trade_price (regular session): 709.86  diff vs primary +0.008%
+  price  StockAnalysis.com last close 2026-10-16: 709.80  diff vs primary +0.000%
+  price  finanzen.net last price 2026-10-16: 709.80  diff vs primary +0.000%
+  52wHi  Robinhood get_equity_fundamentals high_52_weeks (2026-10-06): 762.86  diff vs primary +0.000%
+  52wHi  StockAnalysis.com 52w range high: 762.86  diff vs primary +0.000%
+  52wLo  Robinhood fundamentals low_52_weeks (2026-03-30): 555.60  diff vs primary +0.000%
+
+=== Top holdings: close 2026-10-06 -&gt; 2026-10-16 (QQQ -6.56%) ===
+  NVDA   -10.50%  wt_end 8.14%  est wt_start 8.50%  approx contrib -0.89 pp
+  AAPL    +2.95%  wt_end 7.91%  est wt_start 7.18%  approx contrib +0.21 pp
+  MSFT    -0.05%  wt_end 6.20%  est wt_start 5.80%  approx contrib -0.00 pp
+  MU     -15.95%  wt_end 4.32%  est wt_start 4.80%  approx contrib -0.77 pp
+  AMZN    -2.45%  wt_end 4.25%  est wt_start 4.07%  approx contrib -0.10 pp
+  AMD    -18.58%  wt_end 3.76%  est wt_start 4.31%  approx contrib -0.80 pp
+  META    -4.00%  wt_end 3.33%  est wt_start 3.24%  approx contrib -0.13 pp
+  GOOGL   -2.04%  wt_end 3.15%  est wt_start 3.00%  approx contrib -0.06 pp
+  TSLA    -6.82%  wt_end 2.94%  est wt_start 2.95%  approx contrib -0.20 pp
+  GOOG    -2.23%  wt_end 2.94%  est wt_start 2.81%  approx contrib -0.06 pp
+  AVGO   -12.52%  (weight not in top-10 source list)
+  top-10 approx combined contribution: -2.81 pp of QQQ&#x27;s -6.56%
+  rest of index (approx): -3.76 pp
+  NVDA+MU+AMD approx contribution: -2.46 pp
+
+=== Concentration / size ===
+  top-10 weight sum (StockAnalysis, 2026-10-16): 46.94%
+  NVDA+MU+AMD weight (2026-10-16): 16.22%
+  top-10 weight sum (SEC N-CSRS, 2026-03-31): 46.84%
+  AUM StockAnalysis 489.15B vs Robinhood market_cap 479.08B: diff +2.10%
+  P/E Robinhood 34.15 vs StockAnalysis 29.05: diff +17.56%
+</pre>
+  </details>
+</section>
+<section class="fund" id="smh">
+  <header class="fund-head">
+    <div>
+      <h2><span class="tkr">SMH</span> VanEck Semiconductor ETF</h2>
+      <p class="meta">VanEck · Tracks MVIS US Listed Semiconductor 25 Index (MVSMHTR) - market-cap-weighted, 25 of the largest US-listed semiconductor companies · Expense ratio 0.35%</p>
+    </div>
+    <div class="drop-badge"><span class="big">-19.65%</span><span>from 52-wk high</span></div>
+  </header>
+
+  <dl class="facts">
+    <div><dt>Last close</dt><dd>$539.79</dd><small>2026-10-16</small></div>
+    <div><dt>52-wk high (intraday)</dt><dd>$671.83</dd><small>2026-06-22</small></div>
+    <div><dt>Below high</dt><dd>$132.04</dd><small>-19.30% vs closing high</small></div>
+    <div><dt>52-wk low</dt><dd>$315.05</dd><small>2025-11-21</small></div>
+  </dl>
+
+  <figure><svg viewBox="0 0 640 200" class="spark" role="img" aria-label="Weekly closes over the past 52 weeks against the 52-week high">
+  <line x1="52" x2="626" y1="154.0" y2="154.0" class="grid"/><text x="46" y="157.5" class="axis" text-anchor="end">344</text><line x1="52" x2="626" y1="114.0" y2="114.0" class="grid"/><text x="46" y="117.5" class="axis" text-anchor="end">443</text><line x1="52" x2="626" y1="74.0" y2="74.0" class="grid"/><text x="46" y="77.5" class="axis" text-anchor="end">543</text><line x1="52" x2="626" y1="34.0" y2="34.0" class="grid"/><text x="46" y="37.5" class="axis" text-anchor="end">643</text>
+  <polygon points="52.0,174 52.0,154.3 63.0,151.0 74.1,146.2 85.1,152.2 96.2,153.4 107.2,161.0 118.2,150.5 129.3,145.7 140.3,149.8 151.3,148.9 162.4,145.1 173.4,142.1 184.5,135.7 195.5,131.3 206.5,131.4 217.6,130.0 228.6,130.8 239.7,128.3 250.7,125.4 261.7,128.9 272.8,139.2 283.8,136.5 294.8,137.5 305.9,141.7 316.9,134.5 328.0,116.6 339.0,105.7 350.0,88.8 361.1,87.4 372.1,64.7 383.2,68.8 394.2,60.8 405.2,51.8 416.3,63.5 427.3,43.3 438.3,27.4 449.4,46.7 460.4,54.4 471.5,46.9 482.5,68.7 493.5,66.9 504.6,75.1 515.6,58.3 526.7,56.2 537.7,67.2 548.7,70.1 559.8,64.5 570.8,63.9 581.8,62.1 592.9,48.7 603.9,39.1 615.0,50.0 626.0,75.4 626.0,174" class="area"/>
+  <polyline points="52.0,154.3 63.0,151.0 74.1,146.2 85.1,152.2 96.2,153.4 107.2,161.0 118.2,150.5 129.3,145.7 140.3,149.8 151.3,148.9 162.4,145.1 173.4,142.1 184.5,135.7 195.5,131.3 206.5,131.4 217.6,130.0 228.6,130.8 239.7,128.3 250.7,125.4 261.7,128.9 272.8,139.2 283.8,136.5 294.8,137.5 305.9,141.7 316.9,134.5 328.0,116.6 339.0,105.7 350.0,88.8 361.1,87.4 372.1,64.7 383.2,68.8 394.2,60.8 405.2,51.8 416.3,63.5 427.3,43.3 438.3,27.4 449.4,46.7 460.4,54.4 471.5,46.9 482.5,68.7 493.5,66.9 504.6,75.1 515.6,58.3 526.7,56.2 537.7,67.2 548.7,70.1 559.8,64.5 570.8,63.9 581.8,62.1 592.9,48.7 603.9,39.1 615.0,50.0 626.0,75.4" class="line" fill="none"/>
+  <line x1="52" x2="626" y1="22.6" y2="22.6" class="hiline"/>
+  <text x="626" y="17.6" class="hilabel" text-anchor="end">52-wk high 671.83</text>
+  <circle cx="626.0" cy="75.4" r="4" class="endpt"/>
+  <text x="52.0" y="192" class="axis" text-anchor="start">2025-10-17</text><text x="339.0" y="192" class="axis" text-anchor="middle">2026-04-17</text><text x="626.0" y="192" class="axis" text-anchor="end">2026-10-16</text>
+</svg>
+    <figcaption>Weekly closes, trailing 52 weeks. Dashed line = 52-week intraday high.</figcaption>
+  </figure>
+
+  <dl class="rets"><div><dt>1 month</dt><dd class="neg">-3.71%</dd></div><div><dt>3 months</dt><dd class="neg">-3.41%</dd></div><div><dt>YTD</dt><dd class="pos">+49.89%</dd></div><div><dt>1 year</dt><dd class="pos">+57.24%</dd></div></dl>
+  <p class="src">Price source: mcp__AlphaVantage__GLOBAL_QUOTE (price 539.79, latest trading day 2026-10-16) = mcp__AlphaVantage__TIME_SERIES_DAILY compact close = mcp__robinhood__get_equity_historicals daily close · retrieved 2026-10-18T20:22:23Z. 52-wk high source: Computed in SMH_calc.py from mcp__robinhood__get_equity_historicals daily bars (split-adjusted); confirmed by AV TIME_SERIES_DAILY compact and AV TIME_SERIES_WEEKLY · retrieved 2026-10-18T20:21:52Z.</p>
+  <p class="src">Cross-check (mcp__robinhood__get_equity_quotes + mcp__robinhood__get_equity_fundamentals, 2026-10-18T20:21:36Z): price $539.62, 52-wk high $671.83 — Robinhood last regular-session trade 539.62 at 2026-10-16T19:59:59Z is -0.031% vs the 539.79 official close (Robinhood&#x27;s &#x27;close&#x27; field returned the prior session, 558.84 on 2026-10-15). Robinhood high_52_weeks 671.83 on 2026-06-22 and low_52_weeks 315.05 on 2025-11-21 match the computed values exactly. AV compact daily (100 days) matched the Robinhood daily OHLC with 0.0000% max difference; AV weekly raw 52w high 671.83 also matches. VanEck NAV 539.75 on 2026-10-16 (close premium +0.007%). No price disagreement &gt; 0.5%. Only disagreement &gt; 0.5%: AUM - AV ETF_PROFILE net_assets $74.90B vs VanEck TNA $65.68B (+14.0%) and Robinhood market cap $65.40B.</p>
+
+  <h3>What drove the drop</h3>
+  <p class="summary">SMH closed at $539.79 on Fri 2026-10-16, 19.65% below its 2026-06-22 intraday high of $671.83 (19.30% below the $668.91 closing high). The first leg (to a $504.22 close on 2026-07-29, -24.62%) came from a Korea-led memory/AI selloff, doubts about AI-capex returns, and rising Fed-hike odds; after a +25.72% rebound to 2026-10-05 on raised hyperscaler capex, SMH fell 14.85% in nine sessions as a hot September CPI, AI-financing worries (OpenAI revenue report, Broadcom CEO remarks, CoreWeave) and a China DRAM scare hit chips despite strong TSMC and ASML results. NVIDIA, the 20% top weight, is roughly flat since the high (+2.63%), so losses were concentrated in equipment, memory and custom-silicon names (KLAC -38.42%, MU -27.47%, MRVL -26.02%, AVGO -16.15%).</p>
+  <ol class="drivers"><li><div class="drv-head"><strong>Korea-led semiconductor selloff right after the peak</strong><time>2026-06-23</time></div><p>Day after SMH&#x27;s high it fell 7.01% (largest one-day drop since the high). SOX fell 7.9%, Micron 13%, NVIDIA 4.1%; KOSPI dropped 9.99% with a 20-min halt after regulators flagged chip-sector overheating. Analysts also cited nerves ahead of Micron earnings and stretched valuations (Micron +260% YTD at the time).</p><cite><a href="https://www.gigazine.net/gsc_news/en/20260624-ai-tech-stock-sell-off" target="_blank" rel="noopener">GIGAZINE - AI/tech stock sell-off (2026-06-24)</a></cite></li><li><div class="drv-head"><strong>Memory capacity / AI-ROI doubts and Fed-hike odds</strong><time>2026-07-02</time></div><p>SMH -5.40% (Jul 1) and -4.54% (Jul 2). A Korean report said SK Hynix was slowing HBM expansion; Citi questioned whether hyperscalers can justify AI spend without returns; reports of Meta reselling compute raised overcapacity fears; odds of a second 2026 Fed hike under Chair Warsh rose to about 85% from about 60%.</p><cite><a href="https://app.sentisense.ai/stories/chip-stocks-experience-rout-on-july-2-with-intel-down-6-percent-and-marvell-down-07022026" target="_blank" rel="noopener">SentiSense - Chip stocks rout on July 2</a></cite></li><li><div class="drv-head"><strong>Samsung Q2 update failed to calm AI/memory concerns</strong><time>2026-07-07</time></div><p>SMH -3.78%. Micron and Intel fell as much as 8% as Samsung&#x27;s strong preliminary Q2 did not reassure investors on sustainability of AI-driven memory pricing.</p><cite><a href="https://letsdatascience.com/news/samsung-earnings-trigger-chip-stocks-sell-off-55e9f43f" target="_blank" rel="noopener">Let&#x27;s Data Science - Samsung results trigger chip selloff</a></cite></li><li><div class="drv-head"><strong>Chip index enters bear market; momentum/leverage unwind</strong><time>2026-07-17</time></div><p>SMH -8.92% for the week ending Jul 17. SOX fell about 10% that week to just over 20% below its late-June record; drivers cited were AI-capex sustainability scrutiny, a Chinese open-weight model (Moonshot), a report of a Google Gemini delay, and Goldman-flagged unwinding of margin debt and levered ETFs.</p><cite><a href="https://www.thestar.com.my/tech/tech-news/2026/07/17/chipmakers-and-other-high-flying-stocks-slide-as-ai-trade-wobbles" target="_blank" rel="noopener">The Star / Reuters - Chipmakers and other high-flying stocks slide as AI trade wobbles</a></cite></li><li><div class="drv-head"><strong>Pre-earnings / pre-FOMC selloff to the drawdown low</strong><time>2026-07-29</time></div><p>SMH fell 2.25%, 3.45% and 4.79% on Jul 27-29, reaching its lowest close since the high (504.22, -24.62%). Selling hit memory names (SanDisk down as much as 12.6%) ahead of Microsoft/Meta/Amazon/Apple earnings and a Jul 28-29 Fed meeting with a 25bp hike priced at 35-38%.</p><cite><a href="https://cryptobriefing.com/sp-500-futures-steady-chip-stocks-tumble/" target="_blank" rel="noopener">Crypto Briefing - S&amp;P 500 futures steady as chip stocks take a tumble (2026-07-28)</a></cite></li><li><div class="drv-head"><strong>Rebound on hyperscaler capex (partial recovery, not a driver of the drop)</strong><time>2026-08-03</time></div><p>SMH rose 25.72% from the Jul 29 close to 633.90 on Oct 5 (-5.23% from the closing high) after big-tech capex guidance: roughly $725B combined 2026 hyperscaler capex, Amazon $220B (raised), Meta $130-145B (raised), Microsoft about $175B.</p><cite><a href="https://cryptobriefing.com/amazon-meta-microsoft-ai-earnings-surge/" target="_blank" rel="noopener">Crypto Briefing - Amazon, Meta, Microsoft surge as hyperscaler capex nears $725B</a></cite></li><li><div class="drv-head"><strong>OpenAI revenue report undercut AI-spend expectations; yields and oil up</strong><time>2026-10-08</time></div><p>SMH -2.84% on Oct 8. The FT reported OpenAI told investors annualized revenue was nearing $50B at end-September vs roughly $70B in earlier media reports; rising long-term Treasury yields and oil added pressure.</p><cite><a href="https://www.placera.se/pressmeddelanden/taiwan-semiconductor-manufacturing-ai-revenue-questions-pull-semiconductor-stocks-off-october-highs-20261010" target="_blank" rel="noopener">Canada NewsWire via Placera - AI revenue questions pull semiconductor stocks off October highs (2026-10-10)</a></cite></li><li><div class="drv-head"><strong>Broadcom CEO&#x27;s &#x27;casino&#x27; remarks and financing warning</strong><time>2026-10-12</time></div><p>At a Singapore event Hock Tan likened much AI investing to gambling and said access to financing, not chips, may become the biggest constraint; he also questioned OpenAI&#x27;s long-run profitability. SMH -2.05% on Oct 12.</p><cite><a href="https://investinglive.com/stocks/broadcom-ceo-likens-ai-boom-to-a-casino-even-as-he-targets-230-billion-in-chip-sales/" target="_blank" rel="noopener">investingLive - Broadcom CEO likens AI boom to a casino</a></cite></li><li><div class="drv-head"><strong>China DRAM (CXMT) technology scare for memory</strong><time>2026-10-12</time></div><p>CXMT presented a 4F2 DRAM cell design at a Shanghai conference (not yet shipping); Samsung fell 3.6% and SK Hynix 3.4% on Oct 12, adding to memory-supply/pricing worries (MU 4.68% and SK Hynix 3.80% of SMH).</p><cite><a href="https://stockwirex.com/news/cxmt-4f2-dram-samsung-sk-hynix-stocks-october-2026/" target="_blank" rel="noopener">StockWireX - Samsung, SK Hynix fall as CXMT unveils 4F2 DRAM design</a></cite></li><li><div class="drv-head"><strong>Hot September CPI lifted Fed-hike odds; AI-infrastructure credit stress</strong><time>2026-10-14</time></div><p>SMH -3.98% on Oct 14. Sept CPI 3.7% y/y vs 3.6% expected (core 2.6% vs 2.5%); reported October-hike odds jumped from about 22% to between about 37% and 52% depending on source. SOX fell 4.3% that day and 12% over six sessions; CoreWeave -15%, Oracle -8.8%, Dell -11.4%.</p><cite><a href="https://www.roic.ai/news/chip-stocks-plunge-philadelphia-semiconductor-index-set-to-erase-over-2-trillion-in-market-value-10-15-2026" target="_blank" rel="noopener">ROIC.ai - September inflation surprise (2026-10-14) and chip stocks plunge (2026-10-15)</a></cite></li><li><div class="drv-head"><strong>ASML small revenue miss despite raised guidance (sell-the-news)</strong><time>2026-10-14</time></div><p>ASML Q3 sales EUR 11.66B narrowly missed consensus while EPS beat and FY2026 guidance was raised to EUR 44-45B; shares dipped as ASML was up about 60% YTD at about 56x earnings. ASML is -14.91% since SMH&#x27;s high (computed).</p><cite><a href="https://marketcapof.com/news/asml-stock-earnings-q3-revenue-miss/" target="_blank" rel="noopener">MarketCapOf - ASML stock falls after Q3 earnings as revenue miss weighs</a></cite></li><li><div class="drv-head"><strong>Arm-Qualcomm verdict and broad chip rout capped a -10.53% week</strong><time>2026-10-16</time></div><p>SMH -3.41% on Oct 16 on 2.44x its 30-day average volume; week -10.53%. AMD -5.96%, Micron -5.63%, Broadcom -4.53%, SOXX -4.14%, Nasdaq -2.15%; a jury found Arm breached its license with Qualcomm; December Fed-hike odds 74.3%, 10-yr yield 5.09%.</p><cite><a href="https://ts2.tech/en/nasdaq-drops-2-1-as-chip-rout-caps-a-4-5-weekly-slide/" target="_blank" rel="noopener">ts2.tech - Nasdaq drops 2.1% as chip rout caps a 4.5% weekly slide; 247 Wall St - Arm and AMD fall 5% as Qualcomm verdict adds to chip selloff</a></cite></li><li><div class="drv-head"><strong>Attribution: losses came from non-NVIDIA holdings</strong><time>2026-06-22 to 2026-10-16</time></div><p>From the 2026-06-22 close to the 2026-10-16 final print: NVDA +2.63%, AMD -4.15%, ADI -11.26%, TSM -11.79%, ASML -14.91%, AVGO -16.15%, TXN -16.77%, MRVL -26.02%, MU -27.47%, KLAC -38.42% (SMH -19.30%).</p><cite>Robinhood get_equity_historicals / get_equity_quotes via SMH_calc.py (retrieved 2026-10-18T20:21-20:26Z)</cite></li></ol>
+
+  <div class="cases">
+    <div class="bull"><h3>Bull case</h3><ul class='case'><li><strong>Foundry demand is still accelerating</strong><span>TSMC Q3 2026 revenue $46.72B (+41.2% y/y) beat the top of guidance; Q4 guide $52.3-54.3B (midpoint about +58% y/y); CEO said AI demand shows no signs of slowing. TSMC is 9.32% of SMH.</span><cite><a href="https://xenospectrum.com/en/tsmc-q3-2026-gross-margin-capex/" target="_blank" rel="noopener">XenoSpectrum - TSMC Q3 2026 gross margin and capex (2026-10-16)</a></cite></li><li><strong>Equipment outlook keeps getting raised</strong><span>ASML raised FY2026 sales guidance to EUR 44-45B (third raise this year), guided Q4 to EUR 14.2-15.2B, and said some customers want to place orders for 2029-2030.</span><cite><a href="https://marketcapof.com/news/asml-stock-earnings-q3-revenue-miss/" target="_blank" rel="noopener">MarketCapOf - ASML Q3 2026 results (2026-10-14)</a></cite></li><li><strong>Hyperscaler capex budgets were raised, not cut</strong><span>About $725B combined 2026 hyperscaler capex with $950B-$1.2T expected for 2027; Amazon raised to $220B and Meta to $130-145B.</span><cite><a href="https://cryptobriefing.com/amazon-meta-microsoft-ai-earnings-surge/" target="_blank" rel="noopener">Crypto Briefing - hyperscaler capex nears $725B (2026-08-03)</a></cite></li><li><strong>Custom AI silicon pipeline is large</strong><span>Broadcom targets AI chip revenue rising from about $58B this fiscal year to $230B in FY2028; AI semiconductor revenue was about $17B in fiscal Q3 with about $22B expected in Q4.</span><cite><a href="https://investinglive.com/stocks/broadcom-ceo-likens-ai-boom-to-a-casino-even-as-he-targets-230-billion-in-chip-sales/" target="_blank" rel="noopener">investingLive - Broadcom CEO targets $230B (2026-10-12)</a></cite></li><li><strong>Pullback is within this year&#x27;s range and the largest holding has held up</strong><span>SMH already recovered +25.72% from a -24.62% trough (Jul 29) once this year; it is still +49.89% YTD and +57.24% over 1 year, and NVDA (20.06% weight) is +2.63% since SMH&#x27;s high.</span><cite>Robinhood get_equity_historicals / get_equity_quotes via SMH_calc.py (retrieved 2026-10-18T20:21-20:26Z)</cite></li></ul></div>
+    <div class="bear"><h3>Bear case</h3><ul class='case'><li><strong>Rates are moving against long-duration growth stocks</strong><span>Sept CPI 3.7% y/y (above forecast); Fed already raised to 3.75-4.00% in September; December hike odds 74.3% (vs 50.2% a month earlier) and the 10-year yield about 5.09%.</span><cite><a href="https://www.roic.ai/news/all-eyes-on-warsh-as-september-inflation-surprise-rattles-markets-10-14-2026" target="_blank" rel="noopener">ROIC.ai (2026-10-14); ts2.tech (2026-10-16)</a></cite></li><li><strong>AI financing and return-on-spend doubts</strong><span>OpenAI annualized revenue reported near $50B vs about $70B previously reported; Broadcom&#x27;s CEO warned financing may be the main constraint; CoreWeave (about $50B debt, 2031 bonds yielding above 16%) fell more than 15% on Oct 14.</span><cite><a href="https://www.heygotrade.com/en/news/nvidia-nvda-stock-news-october-16-2026/" target="_blank" rel="noopener">Placera/Canada NewsWire (2026-10-10); Gotrade (2026-10-16)</a></cite></li><li><strong>Valuation leaves little room for misses</strong><span>Robinhood reports SMH P/E 38.57 and P/B 11.67; ASML traded at about 56x earnings and dipped on a roughly $50M revenue miss despite raised guidance.</span><cite><a href="https://marketcapof.com/news/asml-stock-earnings-q3-revenue-miss/" target="_blank" rel="noopener">mcp__robinhood__get_equity_fundamentals (2026-10-18T20:21:36Z); MarketCapOf (2026-10-14)</a></cite></li><li><strong>Memory supply/pricing risk</strong><span>SK Hynix and Samsung plan a combined $548B over five years to double DRAM capacity, and China&#x27;s CXMT unveiled a 4F2 DRAM design; Micron (4.68%) is -27.47% since SMH&#x27;s high.</span><cite><a href="https://www.femaleinvest.com/inspiration-articles/ddd---why-chipmakers-are-having-a-brutal-july" target="_blank" rel="noopener">Female Invest - Why chipmakers are having a brutal July; StockWireX CXMT (2026-10-12)</a></cite></li><li><strong>Concentration and crowded positioning</strong><span>25-stock cap-weighted index; NVDA 20.06% and top-10 67.93% of assets. Goldman flagged rising retail margin debt and levered-ETF assets in July, and SMH&#x27;s last 5 sessions were -10.53% on Oct-16 volume 2.44x its 30-day average.</span><cite><a href="https://www.thestar.com.my/tech/tech-news/2026/07/17/chipmakers-and-other-high-flying-stocks-slide-as-ai-trade-wobbles" target="_blank" rel="noopener">VanEck holdings (as of 2026-10-15); The Star/Reuters (2026-07-17)</a></cite></li></ul></div>
+  </div>
+
+  <details>
+    <summary>Top holdings, data gaps and calculation log</summary>
+    <h4>Top holdings</h4>
+    <div class="tblwrap"><table class="hold"><thead><tr><th>Symbol</th><th>Holding</th><th class="num">Weight</th></tr></thead><tbody><tr><td>NVDA</td><td>NVIDIA Corp</td><td class="num">20.06%</td></tr><tr><td>TSM</td><td>Taiwan Semiconductor Manufacturing Co (ADR)</td><td class="num">9.32%</td></tr><tr><td>AMD</td><td>Advanced Micro Devices Inc</td><td class="num">5.57%</td></tr><tr><td>AVGO</td><td>Broadcom Inc</td><td class="num">5.55%</td></tr><tr><td>TXN</td><td>Texas Instruments Inc</td><td class="num">4.95%</td></tr><tr><td>MU</td><td>Micron Technology Inc</td><td class="num">4.68%</td></tr><tr><td>ADI</td><td>Analog Devices Inc</td><td class="num">4.49%</td></tr><tr><td>ASML</td><td>ASML Holding NV (ADR)</td><td class="num">4.45%</td></tr><tr><td>MRVL</td><td>Marvell Technology Inc</td><td class="num">4.44%</td></tr><tr><td>KLAC</td><td>KLA Corp</td><td class="num">4.42%</td></tr></tbody></table></div><p class="src">Holdings: VanEck SMH holdings page https://www.vaneck.com/etf/equity/SMH/holdings/ (WebFetch ~2026-10-18T20:27-20:30Z); cross-checked vs mcp__AlphaVantage__ETF_PROFILE (last_updated 2026-10-16 00:01 UTC), max top-10 weight difference 0.14 pct-pts. Top-10 = 67.93% of net assets. · as of 2026-10-15</p>
+    <h4>Data gaps</h4>
+    <ul class='gaps'><li>mcp__AlphaVantage__TIME_SERIES_DAILY outputsize=full is premium-only on this key (first call also hit the 1 req/sec limit). Primary daily series is therefore mcp__robinhood__get_equity_historicals (day, regular session, split-adjusted, 2025-10-01..2026-10-16). It was verified against AV TIME_SERIES_DAILY compact (100 days, 0.0000% max OHLC difference) and AV TIME_SERIES_WEEKLY (full history, 52w high/low identical).</li><li>No split in the window: the AV raw/Robinhood split-adjusted close ratio was 1.0000 on all 55 matching dates, and no day-over-day move exceeded 25%.</li><li>mcp__AlphaVantage__NEWS_SENTIMENT is premium-only, so it was not available; news came from WebSearch/WebFetch.</li><li>AUM disagreement &gt; 0.5%: AV ETF_PROFILE net_assets $74.90B vs VanEck TNA $65.68B (2026-10-16) and Robinhood market cap $65.40B. The AV figure looks stale; VanEck is treated as authoritative.</li><li>AV ETF_PROFILE holdings weights differ slightly from VanEck&#x27;s (max 0.14 pct-pts on top-10; AV ranks KLAC 7th, VanEck 10th). VanEck (as of 2026-10-15) is used. VanEck lists &#x27;Total Holdings: 26&#x27;, which counts cash lines; there are 25 equities.</li><li>Component Oct-16 prices are Robinhood get_equity_quotes last_trade_price at about 19:59:59Z (final regular-session print), not official settled closes: Robinhood daily bars for components did not yet include 2026-10-16 at retrieval.</li><li>Returns are price-only; dividends are excluded (not total return).</li><li>Robinhood&#x27;s quote &#x27;close&#x27; field returned the prior session (2026-10-15, 558.84). The Oct-16 official close of 539.79 comes from AV GLOBAL_QUOTE/AV daily and matches Robinhood&#x27;s daily bar.</li><li>No catalyst found for SMH&#x27;s -4.75% drop on 2026-09-14 (a TechFlow item reported broad premarket chip declines with no stated cause).</li><li>Tariffs/export controls: no source tied them directly to the Jun-Oct decline. Background only: Commerce Secretary Lutnick confirmed plans for additional tariffs on servers/laptops (Cryptobriefing, 2026-09-02, https://cryptobriefing.com/trump-tariffs-imported-semiconductors-2026/); a 25% Section 232 tariff on select advanced chips has applied since a 2026-01-14 proclamation. An Oct-15 ROIC.ai piece explicitly did not cite tariffs as a trigger.</li><li>No SMH fund-flow data found for Jun-Oct 2026 (the TipRanks outflow article found dated from Aug 2025 and was not used).</li><li>SOX close for 2026-10-16 not found; SOXX -4.14% used as reported.</li><li>Fed-hike odds after Sept CPI differ by source (about 37% vs about 52% for October); both reported as a range.</li><li>Several news sources are secondary/aggregator sites (Crypto Briefing, StockWireX, ts2.tech, MarketCapOf, SentiSense, ROIC.ai). Their figures were not independently verified against primary wire copy.</li><li>Excluded an undated StockStory/TradingView article on an ASML &#x27;cannot guarantee growth&#x27; warning; it references a July 9 tariff deadline and appears to be from 2025.</li><li>VanEck page retrieval times are approximate (fetched between the logged timestamps 2026-10-18T20:22:45Z and 20:30:37Z).</li><li>Context before the high (not part of the drop): Broadcom&#x27;s guidance triggered a ~10.3% one-day SOX drop on 2026-06-05; SMH then recovered to its 2026-06-22 high.</li></ul>
+    <h4>Calculation output</h4>
+    <pre>Daily source rows: 263  (2025-10-01 .. 2026-10-16)
+Last trading date: 2026-10-16 (Friday)
+52w window: 2025-10-16 .. 2026-10-16  (252 trading days)
+
+--- 52-week stats (primary: Robinhood daily, split-adjusted) ---
+current (last close)      : 539.79 on 2026-10-16
+high_52w_intraday         : 671.83 on 2026-06-22
+high_52w_close            : 668.91 on 2026-06-22
+low_52w_intraday          : 315.05 on 2025-11-21
+low_52w_close             : 325.10 on 2025-11-20
+drop_pct_from_intraday_hi : -19.65%
+drop_pct_from_closing_hi  : -19.30%
+drop_dollars (vs intraday): -132.04
+drop_dollars (vs close hi): -129.12
+trading days since intraday high: 82
+trading days since closing high : 82
+gain from 52w intraday low: 71.33%
+
+--- Returns (price only, close-to-close) ---
+ 1m: -3.71%  (base close 560.61 on 2026-09-17)
+ 3m: -3.41%  (base close 558.83 on 2026-07-20)
+ytd: +49.89%  (base close 360.13 on 2025-12-31)
+ 1y: +57.24%  (base close 343.30 on 2025-10-16)
+
+--- Path since the intraday high ---
+lowest close after high : 504.22 on 2026-07-29 (-24.62% vs closing high)
+highest close after that: 633.90 on 2026-10-05 (-5.23% vs closing high)
+move from that rebound peak to now: -14.85% over 9 trading days
+last 5 trading days: -10.53% (from 603.33 on 2026-10-09)
+last 10 trading days: -14.40% (from 630.60 on 2026-10-02)
+high-volume day 2026-07-27: vol 38,682,157, close 548.55 (-2.25% d/d)
+high-volume day 2026-07-17: vol 22,083,883, close 556.53 (-2.18% d/d)
+high-volume day 2026-07-02: vol 21,334,058, close 592.29 (-4.54% d/d)
+largest 1-day declines since high: 2026-06-23 -7.01%, 2026-07-01 -5.40%, 2026-07-29 -4.79%, 2026-09-14 -4.75%, 2026-07-02 -4.54%
+SMH daily change on driver dates:
+  2026-06-23: close 622.05  -7.01%
+  2026-07-01: close 620.46  -5.40%
+  2026-07-02: close 592.29  -4.54%
+  2026-07-07: close 581.45  -3.78%
+  2026-07-17: close 556.53  -2.18%
+  2026-07-27: close 548.55  -2.25%
+  2026-07-28: close 529.60  -3.45%
+  2026-07-29: close 504.22  -4.79%
+  2026-10-08: close 607.27  -2.84%
+  2026-10-12: close 590.99  -2.05%
+  2026-10-13: close 588.12  -0.49%
+  2026-10-14: close 564.74  -3.98%
+  2026-10-15: close 558.84  -1.04%
+  2026-10-16: close 539.79  -3.41%
+SMH week ending 2026-07-17: -8.92% (from 611.03 on 2026-07-10)
+SMH week ending 2026-10-16: -10.53% (from 603.33 on 2026-10-09)
+Rebound 2026-07-29 close 504.22 -&gt; 2026-10-05 close 633.90: +25.72%
+
+Wrote SMH_weekly.csv with 53 weekly closes (2025-10-17 .. 2026-10-16)
+
+--- Cross-checks ---
+AV GLOBAL_QUOTE price 539.79 (latest trading day 2026-10-16); diff vs primary +0.000%
+RH quote last_trade_price 539.62 @ 2026-10-16T19:59:59.99220837Z; diff vs primary close -0.031%  (RH &#x27;close&#x27; field = 558.84 for 2026-10-15, i.e. prior session)
+RH fundamentals high_52_weeks 671.83 on 2026-06-22; diff vs computed +0.000%
+RH fundamentals low_52_weeks  315.05 on 2025-11-21; diff vs computed +0.000%
+AV compact daily vs RH daily: 100 overlapping days, max OHLC abs diff 0.0000%, AV dates missing in RH: []
+AV compact daily max high 671.83 on 2026-06-22 (covers 2026-05-27..2026-10-16)
+AV weekly (raw) 52w high 671.83 (week ending 2026-06-26), low 315.05 (week ending 2025-11-21)
+Split check: AV raw weekly close / RH split-adj close on 55 matching dates: min 1.0000, max 1.0000 -&gt; no split in window
+Day-over-day close moves &gt;25% in primary series: none
+
+--- Fund facts (AV ETF_PROFILE, last_updated 2026-10-16 00:01 UTC) ---
+net_assets 74,900,000,000; net_expense_ratio 0.35%; turnover 12%; inception 2011-12-20
+  NVDA  NVIDIA CORP                                        20.20%
+  TSM   TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD ADR      9.38%
+  AMD   ADVANCED MICRO DEVICES INC                         5.59%
+  AVGO  BROADCOM INC                                       5.52%
+  TXN   TEXAS INSTRUMENTS INC                              4.92%
+  MU    MICRON TECHNOLOGY INC                              4.54%
+  KLAC  KLA CORP                                           4.48%
+  MRVL  MARVELL TECHNOLOGY INC                             4.47%
+  ADI   ANALOG DEVICES INC                                 4.44%
+  ASML  ASML HOLDING NV ADR                                4.38%
+top-1 weight 20.20%; top-5 45.61%; top-10 67.92%; holdings count 25
+RH fundamentals: pe_ratio 38.57, pb_ratio 11.67, avg volume 30d 7,547,639, Oct-16 volume 18,387,491 (2.44x 30d avg)
+AV ETF_PROFILE net_assets vs RH market_cap: 74.90B vs 65.40B (diff +14.5%)
+
+--- Top-10 holdings: 2026-06-22 close -&gt; 2026-10-16 final regular-session trade (RH get_equity_quotes last_trade_price; not the official settled close) ---
+  KLAC     269.16 -&gt;    165.75   -38.42% since SMH high | Oct-16 day  -4.99% | AV weight 4.48%
+  MU      1211.38 -&gt;    878.67   -27.47% since SMH high | Oct-16 day  -5.65% | AV weight 4.54%
+  MRVL     307.86 -&gt;    227.74   -26.02% since SMH high | Oct-16 day  -5.60% | AV weight 4.47%
+  TXN      332.28 -&gt;    276.55   -16.77% since SMH high | Oct-16 day  -0.92% | AV weight 4.92%
+  AVGO     392.13 -&gt;    328.81   -16.15% since SMH high | Oct-16 day  -4.51% | AV weight 5.52%
+  ASML    1929.25 -&gt;   1641.54   -14.91% since SMH high | Oct-16 day  -0.96% | AV weight 4.38%
+  TSM      467.67 -&gt;    412.51   -11.79% since SMH high | Oct-16 day  -2.31% | AV weight 9.38%
+  ADI      445.48 -&gt;    395.33   -11.26% since SMH high | Oct-16 day  -2.13% | AV weight 4.44%
+  AMD      551.63 -&gt;    528.76    -4.15% since SMH high | Oct-16 day  -5.95% | AV weight 5.59%
+  NVDA     208.65 -&gt;    214.14    +2.63% since SMH high | Oct-16 day  -1.42% | AV weight 20.20%
+  SMH     668.91 -&gt;    539.79   -19.30% since high      | Oct-16 day  -3.41%
+
+--- Issuer (VanEck) cross-check ---
+VanEck top-5 weight 45.45%; top-10 weight 67.93%
+Close vs VanEck NAV (2026-10-16): 539.79 vs 539.75 -&gt; premium +0.007%
+AV ETF_PROFILE net_assets vs VanEck TNA: 74.90B vs 65.68B (diff +14.0%)
+Max abs weight diff AV ETF_PROFILE vs VanEck (top-10): 0.14 pct-pts
+</pre>
+  </details>
+</section>
+<section class="fund" id="arty">
+  <header class="fund-head">
+    <div>
+      <h2><span class="tkr">ARTY</span> iShares Future AI &amp; Tech ETF</h2>
+      <p class="meta">iShares (BlackRock) · Tracks Morningstar Global Artificial Intelligence Select Index (Net). Fund was formerly ticker IRBO; it switched to this index on 2024-08-12 (previously NYSE FactSet Global Robotics and Artificial Intelligence Index). Inception 2018-06-26. No other name/strategy change shown on the iShares product page. · Expense ratio 0.47%</p>
+    </div>
+    <div class="drop-badge"><span class="big">-15.12%</span><span>from 52-wk high</span></div>
+  </header>
+
+  <dl class="facts">
+    <div><dt>Last close</dt><dd>$69.58</dd><small>2026-10-16</small></div>
+    <div><dt>52-wk high (intraday)</dt><dd>$81.97</dd><small>2026-10-06</small></div>
+    <div><dt>Below high</dt><dd>$12.39</dd><small>-14.35% vs closing high</small></div>
+    <div><dt>52-wk low</dt><dd>$43.26</dd><small>2025-11-21</small></div>
+  </dl>
+
+  <figure><svg viewBox="0 0 640 200" class="spark" role="img" aria-label="Weekly closes over the past 52 weeks against the 52-week high">
+  <line x1="52" x2="626" y1="154.0" y2="154.0" class="grid"/><text x="46" y="157.5" class="axis" text-anchor="end">46</text><line x1="52" x2="626" y1="114.0" y2="114.0" class="grid"/><text x="46" y="117.5" class="axis" text-anchor="end">57</text><line x1="52" x2="626" y1="74.0" y2="74.0" class="grid"/><text x="46" y="77.5" class="axis" text-anchor="end">68</text><line x1="52" x2="626" y1="34.0" y2="34.0" class="grid"/><text x="46" y="37.5" class="axis" text-anchor="end">79</text>
+  <polygon points="52.0,174 52.0,147.2 63.0,143.0 74.1,136.5 85.1,147.3 96.2,151.2 107.2,161.0 118.2,149.6 129.3,142.3 140.3,148.5 151.3,149.2 162.4,145.7 173.4,142.0 184.5,139.3 195.5,134.6 206.5,132.6 217.6,135.0 228.6,138.0 239.7,136.6 250.7,135.9 261.7,136.8 272.8,148.0 283.8,146.4 294.8,148.8 305.9,155.9 316.9,148.9 328.0,132.1 339.0,108.6 350.0,96.0 361.1,93.2 372.1,72.7 383.2,82.2 394.2,71.2 405.2,49.5 416.3,64.4 427.3,54.7 438.3,33.9 449.4,58.3 460.4,62.7 471.5,57.5 482.5,83.6 493.5,78.9 504.6,79.1 515.6,56.5 526.7,40.2 537.7,51.4 548.7,49.9 559.8,44.1 570.8,46.5 581.8,44.9 592.9,32.4 603.9,29.0 615.0,33.0 626.0,68.3 626.0,174" class="area"/>
+  <polyline points="52.0,147.2 63.0,143.0 74.1,136.5 85.1,147.3 96.2,151.2 107.2,161.0 118.2,149.6 129.3,142.3 140.3,148.5 151.3,149.2 162.4,145.7 173.4,142.0 184.5,139.3 195.5,134.6 206.5,132.6 217.6,135.0 228.6,138.0 239.7,136.6 250.7,135.9 261.7,136.8 272.8,148.0 283.8,146.4 294.8,148.8 305.9,155.9 316.9,148.9 328.0,132.1 339.0,108.6 350.0,96.0 361.1,93.2 372.1,72.7 383.2,82.2 394.2,71.2 405.2,49.5 416.3,64.4 427.3,54.7 438.3,33.9 449.4,58.3 460.4,62.7 471.5,57.5 482.5,83.6 493.5,78.9 504.6,79.1 515.6,56.5 526.7,40.2 537.7,51.4 548.7,49.9 559.8,44.1 570.8,46.5 581.8,44.9 592.9,32.4 603.9,29.0 615.0,33.0 626.0,68.3" class="line" fill="none"/>
+  <line x1="52" x2="626" y1="22.6" y2="22.6" class="hiline"/>
+  <text x="626" y="17.6" class="hilabel" text-anchor="end">52-wk high 81.97</text>
+  <circle cx="626.0" cy="68.3" r="4" class="endpt"/>
+  <text x="52.0" y="192" class="axis" text-anchor="start">2025-10-17</text><text x="339.0" y="192" class="axis" text-anchor="middle">2026-04-17</text><text x="626.0" y="192" class="axis" text-anchor="end">2026-10-16</text>
+</svg>
+    <figcaption>Weekly closes, trailing 52 weeks. Dashed line = 52-week intraday high.</figcaption>
+  </figure>
+
+  <dl class="rets"><div><dt>1 month</dt><dd class="neg">-7.34%</dd></div><div><dt>3 months</dt><dd class="pos">+5.97%</dd></div><div><dt>YTD</dt><dd class="pos">+44.42%</dd></div><div><dt>1 year</dt><dd class="pos">+43.94%</dd></div></dl>
+  <p class="src">Price source: mcp__robinhood__get_equity_historicals (ARTY, interval=day, bounds=regular, adjustment_type=split); corroborated by https://stockanalysis.com/etf/arty/ (69.58 at 4:00 PM EDT) · retrieved 2026-10-18T20:21:40Z. 52-wk high source: mcp__robinhood__get_equity_historicals (ARTY, interval=day, bounds=regular, adjustment_type=split); matches mcp__robinhood__get_equity_fundamentals high_52_weeks=81.97 (2026-10-06) · retrieved 2026-10-18T20:21:40Z.</p>
+  <p class="src">Cross-check (mcp__robinhood__get_equity_fundamentals + mcp__robinhood__get_equity_quotes; https://stockanalysis.com/etf/arty/; iShares product page NAV, Robinhood 2026-10-18T20:21:40Z; stockanalysis 2026-10-18T20:31:33Z; iShares 2026-10-18T20:27:14Z): price $69.58, 52-wk high $81.97 — All sources agree within 0.5%. Robinhood fundamentals high_52_weeks 81.97 (2026-10-06) and low 43.2611 (2025-11-21) match the calc exactly (0.000%). stockanalysis.com close 69.58 and 52w range 43.26-81.97 match. Robinhood quote last_trade_price 69.68 (last regular-session print 19:59:48Z) is +0.144% vs the 69.58 closing print; Robinhood&#x27;s official-close field still showed 2026-10-15 (72.86). iShares NAV 69.5652 on 10/16 -&gt; close at +0.021% premium. iShares NAV-based 52w high 81.26 vs closing high 81.24 (+0.025%). AlphaVantage could not be used (see data_gaps).</p>
+
+  <h3>What drove the drop</h3>
+  <p class="summary">ARTY closed at $69.58 on Fri 2026-10-16, 15.12% below its 2026-10-06 intraday high of $81.97 (14.35% below the $81.24 closing high), giving back that much in only 8 trading sessions. The drop tracks a broad AI-semiconductor rout (SOXX fell 16.30% over the same span vs QQQ -6.56%): doubts about AI monetization (a report that OpenAI&#x27;s revenue run rate was ~$50B, not ~$70B, and Broadcom&#x27;s CEO likening AI investing to a casino), credit stress at AI-infrastructure borrowers led by CoreWeave, a hotter-than-expected core CPI print that added to Fed-hike bets, and Chinese memory competition. The fund is still up 44.42% YTD on price; the move is a sharp pullback from a fresh high, not a long bear trend.</p>
+  <ol class="drivers"><li><div class="drv-head"><strong>OpenAI revenue shortfall report</strong><time>2026-10-08</time></div><p>Financial Times reported OpenAI&#x27;s annualized revenue near $50B at end-September vs the ~$70B figure previously circulated; Nvidia fell 2.9%, Oracle nearly 6%, SpaceX 4%. ARTY fell 2.80% on 10/08 (calc).</p><cite><a href="https://www.vermoegenszentrum.ch/en/stock-exchange-and-markets/news/openai-revenue-gap-report-rattles-ai-stocks" target="_blank" rel="noopener">OpenAI revenue gap report rattles AI stocks (Vermoegenszentrum, 9 Oct 2026)</a></cite></li><li><div class="drv-head"><strong>Broadcom CEO &#x27;casino&#x27; remarks</strong><time>2026-10-12</time></div><p>At a DBS conference in Singapore, Hock Tan said many AI investors don&#x27;t understand what they own, compared the market to a casino, and flagged capital as AI&#x27;s biggest constraint, while still seeing demand exceeding supply to ~2029-2030. ARTY fell 2.19% on 10/12 (calc).</p><cite><a href="https://thenextweb.com/news/broadcom-hock-tan-ai-investors-casino-capital" target="_blank" rel="noopener">Broadcom CEO Hock Tan likens many AI investors to casino gamblers (The Next Web)</a></cite></li><li><div class="drv-head"><strong>Chinese memory competition (CXMT) hits memory names</strong><time>2026-10-13</time></div><p>CXMT reported progress on a denser 4F2 DRAM design; KOSPI fell nearly 5% on 10/13 with Samsung and SK Hynix each down ~5%, and Micron fell 3.9% in the prior US session. Micron (4.33% weight) fell 15.95% from 10/06 to 10/16 (calc).</p><cite><a href="https://www.mitrade.com/au/insights/news/live-news/article-3-2157299-20261013" target="_blank" rel="noopener">KOSPI Drops 5% as China&#x27;s CXMT Chip Advance Hits Samsung and SK Hynix (Mitrade)</a></cite></li><li><div class="drv-head"><strong>Hot core CPI print</strong><time>2026-10-14</time></div><p>September core CPI rose 0.3% m/m vs 0.2% expected (2.6% y/y vs 2.5%); S&amp;P 500 IT sector fell 3.00%, Nasdaq -1.88%, and Barclays downgraded Dell/HPE/NetApp on AI-valuation grounds. ARTY fell 4.82% on 10/14, its worst day of the drop (calc).</p><cite><a href="https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-oct-14-2026" target="_blank" rel="noopener">Stock Market Today (Oct. 14, 2026) - TheStreet</a></cite></li><li><div class="drv-head"><strong>CoreWeave credit stress / AI-infrastructure financing fears</strong><time>2026-10-15</time></div><p>CoreWeave shares fell ~15% on 10/14 and hit the lowest since May 2025 on 10/15; some bonds yielded &gt;15% and CDS spreads topped 1,000bp. Oracle fell ~10% on 10/14, Nebius and Iren &gt;10%. CRWV (3.66% weight) fell 33.07% from 10/06 to 10/16, the single largest approximate drag on ARTY (-1.21 pts, calc).</p><cite><a href="https://www.roic.ai/news/coreweave-shares-plunge-to-lowest-since-may-2025-as-credit-fears-mount-10-15-2026" target="_blank" rel="noopener">CoreWeave shares plunge to lowest since May 2025 as credit fears mount (ROIC.ai)</a></cite></li><li><div class="drv-head"><strong>TSMC beat but margin outlook disappointed</strong><time>2026-10-15</time></div><p>TSMC Q3 net profit rose ~69% and it raised 2026 USD revenue growth guidance to ~44%, but guided Q4 gross margin to 65-67% (Q3 ~66%) and its US-listed shares slipped. TSM ADR fell 14.45% from 10/06 to 10/16 (calc).</p><cite><a href="https://investinglive.com/stocks/icymi-tsmc-profit-jumps-nearly-70-on-ai-demand-but-margin-outlook-weighs-on-shares/" target="_blank" rel="noopener">ICYMI: TSMC profit jumps nearly 70% on AI demand, but margin outlook weighs on shares (InvestingLive)</a></cite></li><li><div class="drv-head"><strong>Friday chip rout resumes, rate-hike odds climb</strong><time>2026-10-16</time></div><p>Nasdaq -2.15%, SOXX -4.14%, AMD -5.96%, Micron -5.63%, Broadcom -4.53%; VIX +22.5% to 20.16; CME odds of a December hike cited at 74.3% (from 50.2% a month earlier); Brent +3.7% to $109.86. Nasdaq&#x27;s worst week since June. ARTY -4.50% on 10/16 (calc).</p><cite><a href="https://ts2.tech/en/nasdaq-drops-2-1-as-chip-rout-caps-a-4-5-weekly-slide/" target="_blank" rel="noopener">Nasdaq drops 2.1% as chip rout caps a 4.5% weekly slide (TS2)</a></cite></li><li><div class="drv-head"><strong>Tightening Fed backdrop</strong><time>2026-09-16</time></div><p>The Fed raised rates 25bp on 2026-09-16 to 3.75-4.00% (first hike since 2023) and the median dot (4.125%) implies further tightening, raising the discount rate on long-duration AI growth stocks.</p><cite><a href="https://www.mufgresearch.com/articles/september-2026-fomc-recap" target="_blank" rel="noopener">September 2026 FOMC recap (MUFG Research)</a></cite></li></ol>
+
+  <div class="cases">
+    <div class="bull"><h3>Bull case</h3><ul class='case'><li><strong>Core AI demand still growing fast</strong><span>TSMC (4.59% weight) reported Q3 revenue +50.9% y/y and net profit +68.7% y/y with a 66.4% gross margin; it also raised its 2026 USD growth outlook to ~44% from ~40% (per InvestingLive, 15 Oct 2026).</span><cite><a href="https://timesofoman.com/article/178032-tsmc-q3-july-sep-profit-jumps-687-to-usd-239-billion-revenue-rises-509" target="_blank" rel="noopener">TSMC Q3 (July-Sep) profit jumps 68.7% to USD 23.9 billion, revenue rises 50.9% (Times of Oman, 15 Oct 2026)</a></cite></li><li><strong>Supply-constrained outlook from a top holding</strong><span>Broadcom&#x27;s CEO forecast AI chip revenue rising from ~$58B this fiscal year to $230B in FY2028, and said compute demand exceeds supply possibly through 2029-2030.</span><cite><a href="https://investinglive.com/stocks/broadcom-ceo-likens-ai-boom-to-a-casino-even-as-he-targets-230-billion-in-chip-sales/" target="_blank" rel="noopener">Broadcom CEO likens AI boom to a casino even as he targets $230 billion in chip sales (InvestingLive)</a></cite></li><li><strong>Valuation has de-rated meaningfully</strong><span>Fund P/E fell from 41.87x (fact sheet, 2026-06-30) to 31.85x (iShares page, 2026-10-15), a 23.93% compression (calc), as earnings grew and prices pulled back.</span><cite><a href="https://ishares.com/us/products/297905/ishares-future-ai-tech-etf" target="_blank" rel="noopener">iShares ARTY fact sheet and product page</a></cite></li><li><strong>Has recovered from a deeper drawdown this year</strong><span>Within the 52-week window ARTY fell 24.05% on a closing basis (2026-06-02 to 2026-07-29) and went on to set new highs by 2026-10-06 (calc on Robinhood daily bars); the current pullback (-14.35%) is smaller so far.</span><cite>Robinhood daily historicals (ARTY)</cite></li><li><strong>Efficient, liquid wrapper with tight NAV tracking</strong><span>$3.71B net assets, 0.47% expense ratio, close at +0.021% premium to NAV on 10/16 (calc); 1y NAV return 85.56% vs benchmark 85.40% as of 6/30.</span><cite><a href="https://ishares.com/us/literature/fact-sheet/arty-ishares-future-ai-tech-etf-fund-fact-sheet-en-us.pdf" target="_blank" rel="noopener">iShares product page and fact sheet</a></cite></li></ul></div>
+    <div class="bear"><h3>Bear case</h3><ul class='case'><li><strong>Concentrated in semiconductors and highly correlated with chip cycles</strong><span>87.70% Information Technology (6/30 fact sheet); top-10 = 43.47% of assets (10/15, calc). From the high, ARTY fell 14.35% vs SOXX -16.30% and QQQ -6.56% (calc), so it behaves like a chip fund.</span><cite><a href="https://ishares.com/us/literature/fact-sheet/arty-ishares-future-ai-tech-etf-fund-fact-sheet-en-us.pdf" target="_blank" rel="noopener">iShares ARTY fact sheet; iShares holdings CSV</a></cite></li><li><strong>AI-infrastructure financing is showing strain</strong><span>CoreWeave spent $6.42B on property/equipment in Q2 vs $679M operating cash flow, carries ~$35.1B debt, and has bonds yielding &gt;15%; CoreWeave and Oracle together are 7.64% of ARTY.</span><cite><a href="https://www.roic.ai/news/coreweave-shares-plunge-to-lowest-since-may-2025-as-credit-fears-mount-10-15-2026" target="_blank" rel="noopener">CoreWeave shares plunge to lowest since May 2025 as credit fears mount (ROIC.ai)</a></cite></li><li><strong>Monetization of AI spend is being questioned</strong><span>OpenAI&#x27;s run-rate revenue reportedly near $50B vs ~$70B expected; Broadcom&#x27;s CEO said most companies haven&#x27;t found AI uses that pay off.</span><cite><a href="https://www.vermoegenszentrum.ch/en/stock-exchange-and-markets/news/openai-revenue-gap-report-rattles-ai-stocks" target="_blank" rel="noopener">OpenAI revenue gap report rattles AI stocks (Vermoegenszentrum)</a></cite></li><li><strong>Rising-rate regime pressures long-duration growth multiples</strong><span>Fed hiked to 3.75-4.00% on 2026-09-16 with dots implying more; core CPI beat on 10/14; December hike odds cited at 74.3% on 10/16.</span><cite><a href="https://www.mufgresearch.com/articles/september-2026-fomc-recap" target="_blank" rel="noopener">MUFG September 2026 FOMC recap; TS2 market wrap 10/16</a></cite></li><li><strong>Memory competition and sentiment fatigue</strong><span>CXMT&#x27;s DRAM progress hit Samsung/SK Hynix ~5% on 10/13; 22 of 30 SOX members were &gt;20% below their May/June highs as of 10/13 even before the latest leg down.</span><cite><a href="https://cryptobriefing.com/ai-fatigue-chip-stocks-losing-streak/" target="_blank" rel="noopener">AI fatigue drives chip stocks to their longest losing streak since May 2025 (Crypto Briefing)</a></cite></li></ul></div>
+  </div>
+
+  <details>
+    <summary>Top holdings, data gaps and calculation log</summary>
+    <h4>Top holdings</h4>
+    <div class="tblwrap"><table class="hold"><thead><tr><th>Symbol</th><th>Holding</th><th class="num">Weight</th></tr></thead><tbody><tr><td>AMD</td><td>Advanced Micro Devices</td><td class="num">5.55%</td></tr><tr><td>MRVL</td><td>Marvell Technology</td><td class="num">5.07%</td></tr><tr><td>NVDA</td><td>NVIDIA</td><td class="num">4.59%</td></tr><tr><td>2330 (TW)</td><td>Taiwan Semiconductor Manufacturing</td><td class="num">4.59%</td></tr><tr><td>AVGO</td><td>Broadcom</td><td class="num">4.57%</td></tr><tr><td>MU</td><td>Micron Technology</td><td class="num">4.33%</td></tr><tr><td>ORCL</td><td>Oracle</td><td class="num">3.98%</td></tr><tr><td>3443 (TW)</td><td>Global Unichip</td><td class="num">3.90%</td></tr><tr><td>CRWV</td><td>CoreWeave Class A</td><td class="num">3.66%</td></tr><tr><td>SMCI</td><td>Super Micro Computer</td><td class="num">3.23%</td></tr></tbody></table></div><p class="src">Holdings: https://www.ishares.com/us/products/297905/ishares-future-ai-tech-etf/latest-holdings.csv (via WebFetch, retrieved 2026-10-18T20:27:43Z). Top-10 = 43.47%, top-15 = 58.13% (calc). Fact sheet 6/30/2026 for sector/country: IT 87.70%, US 66.32%, Taiwan 16.58%, Korea 6.53%. · as of 2026-10-15</p>
+    <h4>Data gaps</h4>
+    <ul class='gaps'><li>AlphaVantage unavailable: TIME_SERIES_DAILY outputsize=full returned &#x27;premium feature&#x27;; subsequent calls (GLOBAL_QUOTE, TIME_SERIES_WEEKLY, ETF_PROFILE) hit the free key&#x27;s 25/day limit (shared across workers). Primary daily series is therefore Robinhood get_equity_historicals (split-adjusted, regular session), 2025-09-02 to 2026-10-16, 284 bars, no OHLC violations, no split detected.</li><li>AlphaVantage NEWS_SENTIMENT not used (quota). News drivers come from WebSearch/WebFetch.</li><li>Robinhood get_equity_quotes official-close field returned 2026-10-15 (72.86), not 2026-10-16; the 10/16 close of 69.58 is from the Robinhood daily bar and is corroborated by stockanalysis.com and the iShares NAV (69.5652).</li><li>iShares holdings CSV could not be downloaded directly (proxy 403 on www.ishares.com); top-15 weights were extracted through WebFetch&#x27;s summarizer, not parsed line by line.</li><li>Holdings count disagrees: 50 (iShares page, 10/15), 49 (fact sheet, 6/30), 78 (stockanalysis.com, likely counts cash/FX lines).</li><li>Attribution covers 13 of the top 15 names (51.11% of assets); Global Unichip (3443 TW) and Naver (035420 KR) price moves not retrieved. TSMC move uses the US ADR as a proxy for the Taiwan line. Weights are 10/15 values applied to a 10/06-10/16 window, so contributions are approximate.</li><li>AUM disagrees &gt;0.5% across sources: iShares $3.711B (10/16) vs Robinhood market_cap $3.754B (+1.15%) vs stockanalysis $3.88B (+4.55%); shares outstanding iShares 53.35M vs Robinhood 53.875M (+0.98%). iShares treated as authoritative.</li><li>P/E differs by source: iShares 31.85 (10/15) vs Robinhood pe_ratio 33.18.</li><li>Treasury-yield levels conflict across articles (10y quoted at 5.09%, 5.19% and 5.278% around 10/14-10/16); exact yields not used.</li><li>Hock Tan remark date: The Next Web says Monday 2026-10-12 (Singapore); a Crypto Briefing piece dates it 10/08. The Next Web date is used.</li><li>Fund flow (creation/redemption) data for the drop window not found.</li><li>Returns are price-only and exclude distributions; iShares-published total returns use different end dates (YTD NAV TR 51.37% to 10/15 vs calc YTD price return 51.22% to 10/15).</li></ul>
+    <h4>Calculation output</h4>
+    <pre>rows loaded: 284  first=2025-09-02  last=2026-10-16
+OHLC consistency violations: 0
+close-to-close moves &gt;40% (possible split): none
+largest calendar gap between bars: 4 days
+
+last_trading_date: 2026-10-16
+52w window: 2025-10-16 .. 2026-10-16 inclusive  (252 trading days)
+
+current (last close):        69.5800  on 2026-10-16
+high_52w_intraday:           81.9700  on 2026-10-06
+high_52w_close:              81.2400  on 2026-10-06
+low_52w_intraday:            43.2611  on 2025-11-21
+low_52w_close:               44.2000  on 2026-03-30
+drop_pct_from_intraday_high: -15.12%
+drop_pct_from_closing_high:  -14.35%
+drop_dollars (vs intraday):  -12.39
+drop_dollars (vs close hi):  -11.66
+trading_days_since_intraday_high: 8
+trading_days_since_closing_high:  8
+gain from 52w intraday low to current: 60.84%
+
+returns (price return, close-to-close, excludes distributions):
+   1m (21 trading days back, ref 2026-09-17 close 75.09): -7.34%
+   3m (63 trading days back, ref 2026-07-20 close 65.66): 5.97%
+  ytd (ref 2025-12-31 close 48.18): 44.42%
+  1y  (ref 2025-10-16 close 48.34): 43.94%
+
+last 10 sessions (date, close, daily % chg):
+  2026-10-05  80.80  +0.70%
+  2026-10-06  81.24  +0.54%
+  2026-10-07  80.60  -0.79%
+  2026-10-08  78.34  -2.80%
+  2026-10-09  79.15  +1.03%
+  2026-10-12  77.42  -2.19%
+  2026-10-13  77.15  -0.35%
+  2026-10-14  73.43  -4.82%
+  2026-10-15  72.86  -0.78%
+  2026-10-16  69.58  -4.50%
+week-over-week (vs 2026-10-09 close 79.15): -12.09%
+
+max closing drawdown in window: -24.05%  (peak 2026-06-02 80.75 -&gt; trough 2026-07-29 61.33)
+
+top-holding price moves, 2026-10-06 close -&gt; 2026-10-16 close (approx contribution = weight x move):
+  AMD                w= 5.55%  move= -18.58%  approx_contrib=-1.03 pts
+  MRVL               w= 5.07%  move= -20.62%  approx_contrib=-1.05 pts
+  NVDA               w= 4.59%  move= -10.50%  approx_contrib=-0.48 pts
+  TSM(ADR for 2330)  w= 4.59%  move= -14.45%  approx_contrib=-0.66 pts
+  AVGO               w= 4.57%  move= -12.52%  approx_contrib=-0.57 pts
+  MU                 w= 4.33%  move= -15.95%  approx_contrib=-0.69 pts
+  ORCL               w= 3.98%  move= -11.43%  approx_contrib=-0.45 pts
+  CRWV               w= 3.66%  move= -33.07%  approx_contrib=-1.21 pts
+  SMCI               w= 3.23%  move= -27.22%  approx_contrib=-0.88 pts
+  PLTR               w= 3.11%  move=  -3.14%  approx_contrib=-0.10 pts
+  MSFT               w= 3.01%  move=  -0.05%  approx_contrib=-0.00 pts
+  SPCX               w= 2.72%  move= -15.06%  approx_contrib=-0.41 pts
+  IBM                w= 2.70%  move=  +4.90%  approx_contrib=+0.13 pts
+  listed weight total: 51.11%  approx contribution of listed names: -7.41 pts (ARTY total -14.35%; weights are as-of 10/15 so this is an approximation)
+  benchmark SOXX: -16.30%
+  benchmark QQQ: -6.56%
+  ARTY close 10/06 -&gt; 10/16: -14.35%
+
+cross-checks:
+  RH fundamentals high_52_weeks 81.97 (2026-10-06) vs calc 81.97: diff +0.000%
+  RH fundamentals low_52_weeks  43.2611 (2025-11-21) vs calc 43.2611: diff +0.000%
+  RH quote last_trade_price 69.68 vs calc close 69.58: diff +0.144%
+  stockanalysis close 69.58 vs calc: diff +0.000%;  52w high 81.97 vs calc: diff +0.000%
+  close vs iShares NAV 69.5652: premium +0.021%
+  iShares NAV 52w high 81.26 vs calc closing high 81.24: diff +0.025%
+  calc YTD price return to 2026-10-15: 51.22% (iShares YTD NAV total return 51.37%)
+  AUM: iShares 3.711B vs RH market_cap 3.754B (+1.15%) vs stockanalysis 3.88B (+4.55%)
+  shares out: iShares 53,350,000 vs RH 53,875,000 (+0.98%)
+  fund P/E change 6/30 -&gt; 10/15: -23.93%;  P/B 6.74 -&gt; 6.54: -2.97%
+  top-10 weight (10/15): 43.47%   top-15 weight: 58.13%
+  top-10 weight (fact sheet 6/30): 42.75% (as published)
+  CRWV + ORCL combined weight (10/15): 7.64%
+
+weekly closes written: 53 rows -&gt; /home/claude/research/ARTY_weekly.csv
+</pre>
+  </details>
+</section>
+
+  <footer class="foot">
+    <p>Method: daily OHLC pulled per fund and saved to CSV; 52-week high, % drop, returns and weekly series computed in Python, then re-derived independently from the same CSV before publishing. Narrative and bull/bear points are summarised from the cited sources. This is research, not investment advice.</p>
+  </footer>
+</main>

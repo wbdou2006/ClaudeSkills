@@ -1,0 +1,12 @@
+{
+  "_comment": "Used when the user runs the skill without naming any tickers. Edit freely. type = etf | stock | index. For indexes, id is the file-safe label used in the report; data_symbol is what to look up.",
+  "default_watchlist": [
+    {"id": "XLK",  "type": "etf",   "name": "Technology Select Sector SPDR Fund"},
+    {"id": "FTEC", "type": "etf",   "name": "Fidelity MSCI Information Technology Index ETF"},
+    {"id": "QQQ",  "type": "etf",   "name": "Invesco QQQ Trust"},
+    {"id": "SMH",  "type": "etf",   "name": "VanEck Semiconductor ETF"},
+    {"id": "ARTY", "type": "etf",   "name": "iShares Future AI & Tech ETF"},
+    {"id": "SPX",  "type": "index", "name": "S&P 500 Index", "data_symbol": "SPX", "proxy_etf": "SPY"},
+    {"id": "DJI",  "type": "index", "name": "Dow Jones Industrial Average", "data_symbol": "DJI", "proxy_etf": "DIA"}
+  ]
+}

@@ -1,0 +1,284 @@
+{
+  "ticker": "SMH",
+  "fund_name": "VanEck Semiconductor ETF",
+  "issuer": "VanEck",
+  "index_tracked": "MVIS US Listed Semiconductor 25 Index (MVSMHTR) - market-cap-weighted, 25 of the largest US-listed semiconductor companies",
+  "expense_ratio": {
+    "value": 0.35,
+    "unit": "percent",
+    "source": "VanEck SMH overview page (Total Expense Ratio 0.35%) https://www.vaneck.com/etf/equity/SMH/overview/; matches mcp__AlphaVantage__ETF_PROFILE net_expense_ratio 0.0035",
+    "retrieved_at": "2026-10-18T20:22:45Z (AV ETF_PROFILE); VanEck page fetched ~2026-10-18T20:23-20:26Z"
+  },
+  "last_trading_date": "2026-10-16",
+  "current_price": {
+    "value": 539.79,
+    "basis": "official close",
+    "date": "2026-10-16",
+    "source": "mcp__AlphaVantage__GLOBAL_QUOTE (price 539.79, latest trading day 2026-10-16) = mcp__AlphaVantage__TIME_SERIES_DAILY compact close = mcp__robinhood__get_equity_historicals daily close",
+    "retrieved_at": "2026-10-18T20:22:23Z"
+  },
+  "high_52w_intraday": {
+    "value": 671.83,
+    "date": "2026-06-22",
+    "source": "Computed in SMH_calc.py from mcp__robinhood__get_equity_historicals daily bars (split-adjusted); confirmed by AV TIME_SERIES_DAILY compact and AV TIME_SERIES_WEEKLY",
+    "retrieved_at": "2026-10-18T20:21:52Z"
+  },
+  "high_52w_close": {
+    "value": 668.91,
+    "date": "2026-06-22"
+  },
+  "low_52w_intraday": {
+    "value": 315.05,
+    "date": "2025-11-21"
+  },
+  "drop_pct_from_intraday_high": -19.65,
+  "drop_pct_from_closing_high": -19.3,
+  "drop_dollars": -132.04,
+  "trading_days_since_high": 82,
+  "returns_pct": {
+    "1m": -3.71,
+    "3m": -3.41,
+    "ytd": 49.89,
+    "1y": 57.24,
+    "_note": "price-only close-to-close; 1m base 2026-09-17 (21 trading days), 3m base 2026-07-20 (63), YTD base 2025-12-31 close 360.13, 1y base 2025-10-16 close 343.30"
+  },
+  "cross_check": {
+    "source": "mcp__robinhood__get_equity_quotes + mcp__robinhood__get_equity_fundamentals",
+    "retrieved_at": "2026-10-18T20:21:36Z",
+    "price": 539.62,
+    "high_52w": 671.83,
+    "note": "Robinhood last regular-session trade 539.62 at 2026-10-16T19:59:59Z is -0.031% vs the 539.79 official close (Robinhood's 'close' field returned the prior session, 558.84 on 2026-10-15). Robinhood high_52_weeks 671.83 on 2026-06-22 and low_52_weeks 315.05 on 2025-11-21 match the computed values exactly. AV compact daily (100 days) matched the Robinhood daily OHLC with 0.0000% max difference; AV weekly raw 52w high 671.83 also matches. VanEck NAV 539.75 on 2026-10-16 (close premium +0.007%). No price disagreement > 0.5%. Only disagreement > 0.5%: AUM - AV ETF_PROFILE net_assets $74.90B vs VanEck TNA $65.68B (+14.0%) and Robinhood market cap $65.40B."
+  },
+  "top_holdings": [
+    {
+      "name": "NVIDIA Corp",
+      "symbol": "NVDA",
+      "weight_pct": 20.06
+    },
+    {
+      "name": "Taiwan Semiconductor Manufacturing Co (ADR)",
+      "symbol": "TSM",
+      "weight_pct": 9.32
+    },
+    {
+      "name": "Advanced Micro Devices Inc",
+      "symbol": "AMD",
+      "weight_pct": 5.57
+    },
+    {
+      "name": "Broadcom Inc",
+      "symbol": "AVGO",
+      "weight_pct": 5.55
+    },
+    {
+      "name": "Texas Instruments Inc",
+      "symbol": "TXN",
+      "weight_pct": 4.95
+    },
+    {
+      "name": "Micron Technology Inc",
+      "symbol": "MU",
+      "weight_pct": 4.68
+    },
+    {
+      "name": "Analog Devices Inc",
+      "symbol": "ADI",
+      "weight_pct": 4.49
+    },
+    {
+      "name": "ASML Holding NV (ADR)",
+      "symbol": "ASML",
+      "weight_pct": 4.45
+    },
+    {
+      "name": "Marvell Technology Inc",
+      "symbol": "MRVL",
+      "weight_pct": 4.44
+    },
+    {
+      "name": "KLA Corp",
+      "symbol": "KLAC",
+      "weight_pct": 4.42
+    }
+  ],
+  "holdings_source": "VanEck SMH holdings page https://www.vaneck.com/etf/equity/SMH/holdings/ (WebFetch ~2026-10-18T20:27-20:30Z); cross-checked vs mcp__AlphaVantage__ETF_PROFILE (last_updated 2026-10-16 00:01 UTC), max top-10 weight difference 0.14 pct-pts. Top-10 = 67.93% of net assets.",
+  "holdings_as_of": "2026-10-15",
+  "drop_summary": "SMH closed at $539.79 on Fri 2026-10-16, 19.65% below its 2026-06-22 intraday high of $671.83 (19.30% below the $668.91 closing high). The first leg (to a $504.22 close on 2026-07-29, -24.62%) came from a Korea-led memory/AI selloff, doubts about AI-capex returns, and rising Fed-hike odds; after a +25.72% rebound to 2026-10-05 on raised hyperscaler capex, SMH fell 14.85% in nine sessions as a hot September CPI, AI-financing worries (OpenAI revenue report, Broadcom CEO remarks, CoreWeave) and a China DRAM scare hit chips despite strong TSMC and ASML results. NVIDIA, the 20% top weight, is roughly flat since the high (+2.63%), so losses were concentrated in equipment, memory and custom-silicon names (KLAC -38.42%, MU -27.47%, MRVL -26.02%, AVGO -16.15%).",
+  "drivers": [
+    {
+      "driver": "Korea-led semiconductor selloff right after the peak",
+      "detail": "Day after SMH's high it fell 7.01% (largest one-day drop since the high). SOX fell 7.9%, Micron 13%, NVIDIA 4.1%; KOSPI dropped 9.99% with a 20-min halt after regulators flagged chip-sector overheating. Analysts also cited nerves ahead of Micron earnings and stretched valuations (Micron +260% YTD at the time).",
+      "date": "2026-06-23",
+      "source_title": "GIGAZINE - AI/tech stock sell-off (2026-06-24)",
+      "url": "https://www.gigazine.net/gsc_news/en/20260624-ai-tech-stock-sell-off"
+    },
+    {
+      "driver": "Memory capacity / AI-ROI doubts and Fed-hike odds",
+      "detail": "SMH -5.40% (Jul 1) and -4.54% (Jul 2). A Korean report said SK Hynix was slowing HBM expansion; Citi questioned whether hyperscalers can justify AI spend without returns; reports of Meta reselling compute raised overcapacity fears; odds of a second 2026 Fed hike under Chair Warsh rose to about 85% from about 60%.",
+      "date": "2026-07-02",
+      "source_title": "SentiSense - Chip stocks rout on July 2",
+      "url": "https://app.sentisense.ai/stories/chip-stocks-experience-rout-on-july-2-with-intel-down-6-percent-and-marvell-down-07022026"
+    },
+    {
+      "driver": "Samsung Q2 update failed to calm AI/memory concerns",
+      "detail": "SMH -3.78%. Micron and Intel fell as much as 8% as Samsung's strong preliminary Q2 did not reassure investors on sustainability of AI-driven memory pricing.",
+      "date": "2026-07-07",
+      "source_title": "Let's Data Science - Samsung results trigger chip selloff",
+      "url": "https://letsdatascience.com/news/samsung-earnings-trigger-chip-stocks-sell-off-55e9f43f"
+    },
+    {
+      "driver": "Chip index enters bear market; momentum/leverage unwind",
+      "detail": "SMH -8.92% for the week ending Jul 17. SOX fell about 10% that week to just over 20% below its late-June record; drivers cited were AI-capex sustainability scrutiny, a Chinese open-weight model (Moonshot), a report of a Google Gemini delay, and Goldman-flagged unwinding of margin debt and levered ETFs.",
+      "date": "2026-07-17",
+      "source_title": "The Star / Reuters - Chipmakers and other high-flying stocks slide as AI trade wobbles",
+      "url": "https://www.thestar.com.my/tech/tech-news/2026/07/17/chipmakers-and-other-high-flying-stocks-slide-as-ai-trade-wobbles"
+    },
+    {
+      "driver": "Pre-earnings / pre-FOMC selloff to the drawdown low",
+      "detail": "SMH fell 2.25%, 3.45% and 4.79% on Jul 27-29, reaching its lowest close since the high (504.22, -24.62%). Selling hit memory names (SanDisk down as much as 12.6%) ahead of Microsoft/Meta/Amazon/Apple earnings and a Jul 28-29 Fed meeting with a 25bp hike priced at 35-38%.",
+      "date": "2026-07-29",
+      "source_title": "Crypto Briefing - S&P 500 futures steady as chip stocks take a tumble (2026-07-28)",
+      "url": "https://cryptobriefing.com/sp-500-futures-steady-chip-stocks-tumble/"
+    },
+    {
+      "driver": "Rebound on hyperscaler capex (partial recovery, not a driver of the drop)",
+      "detail": "SMH rose 25.72% from the Jul 29 close to 633.90 on Oct 5 (-5.23% from the closing high) after big-tech capex guidance: roughly $725B combined 2026 hyperscaler capex, Amazon $220B (raised), Meta $130-145B (raised), Microsoft about $175B.",
+      "date": "2026-08-03",
+      "source_title": "Crypto Briefing - Amazon, Meta, Microsoft surge as hyperscaler capex nears $725B",
+      "url": "https://cryptobriefing.com/amazon-meta-microsoft-ai-earnings-surge/"
+    },
+    {
+      "driver": "OpenAI revenue report undercut AI-spend expectations; yields and oil up",
+      "detail": "SMH -2.84% on Oct 8. The FT reported OpenAI told investors annualized revenue was nearing $50B at end-September vs roughly $70B in earlier media reports; rising long-term Treasury yields and oil added pressure.",
+      "date": "2026-10-08",
+      "source_title": "Canada NewsWire via Placera - AI revenue questions pull semiconductor stocks off October highs (2026-10-10)",
+      "url": "https://www.placera.se/pressmeddelanden/taiwan-semiconductor-manufacturing-ai-revenue-questions-pull-semiconductor-stocks-off-october-highs-20261010"
+    },
+    {
+      "driver": "Broadcom CEO's 'casino' remarks and financing warning",
+      "detail": "At a Singapore event Hock Tan likened much AI investing to gambling and said access to financing, not chips, may become the biggest constraint; he also questioned OpenAI's long-run profitability. SMH -2.05% on Oct 12.",
+      "date": "2026-10-12",
+      "source_title": "investingLive - Broadcom CEO likens AI boom to a casino",
+      "url": "https://investinglive.com/stocks/broadcom-ceo-likens-ai-boom-to-a-casino-even-as-he-targets-230-billion-in-chip-sales/"
+    },
+    {
+      "driver": "China DRAM (CXMT) technology scare for memory",
+      "detail": "CXMT presented a 4F2 DRAM cell design at a Shanghai conference (not yet shipping); Samsung fell 3.6% and SK Hynix 3.4% on Oct 12, adding to memory-supply/pricing worries (MU 4.68% and SK Hynix 3.80% of SMH).",
+      "date": "2026-10-12",
+      "source_title": "StockWireX - Samsung, SK Hynix fall as CXMT unveils 4F2 DRAM design",
+      "url": "https://stockwirex.com/news/cxmt-4f2-dram-samsung-sk-hynix-stocks-october-2026/"
+    },
+    {
+      "driver": "Hot September CPI lifted Fed-hike odds; AI-infrastructure credit stress",
+      "detail": "SMH -3.98% on Oct 14. Sept CPI 3.7% y/y vs 3.6% expected (core 2.6% vs 2.5%); reported October-hike odds jumped from about 22% to between about 37% and 52% depending on source. SOX fell 4.3% that day and 12% over six sessions; CoreWeave -15%, Oracle -8.8%, Dell -11.4%.",
+      "date": "2026-10-14",
+      "source_title": "ROIC.ai - September inflation surprise (2026-10-14) and chip stocks plunge (2026-10-15)",
+      "url": "https://www.roic.ai/news/chip-stocks-plunge-philadelphia-semiconductor-index-set-to-erase-over-2-trillion-in-market-value-10-15-2026"
+    },
+    {
+      "driver": "ASML small revenue miss despite raised guidance (sell-the-news)",
+      "detail": "ASML Q3 sales EUR 11.66B narrowly missed consensus while EPS beat and FY2026 guidance was raised to EUR 44-45B; shares dipped as ASML was up about 60% YTD at about 56x earnings. ASML is -14.91% since SMH's high (computed).",
+      "date": "2026-10-14",
+      "source_title": "MarketCapOf - ASML stock falls after Q3 earnings as revenue miss weighs",
+      "url": "https://marketcapof.com/news/asml-stock-earnings-q3-revenue-miss/"
+    },
+    {
+      "driver": "Arm-Qualcomm verdict and broad chip rout capped a -10.53% week",
+      "detail": "SMH -3.41% on Oct 16 on 2.44x its 30-day average volume; week -10.53%. AMD -5.96%, Micron -5.63%, Broadcom -4.53%, SOXX -4.14%, Nasdaq -2.15%; a jury found Arm breached its license with Qualcomm; December Fed-hike odds 74.3%, 10-yr yield 5.09%.",
+      "date": "2026-10-16",
+      "source_title": "ts2.tech - Nasdaq drops 2.1% as chip rout caps a 4.5% weekly slide; 247 Wall St - Arm and AMD fall 5% as Qualcomm verdict adds to chip selloff",
+      "url": "https://ts2.tech/en/nasdaq-drops-2-1-as-chip-rout-caps-a-4-5-weekly-slide/"
+    },
+    {
+      "driver": "Attribution: losses came from non-NVIDIA holdings",
+      "detail": "From the 2026-06-22 close to the 2026-10-16 final print: NVDA +2.63%, AMD -4.15%, ADI -11.26%, TSM -11.79%, ASML -14.91%, AVGO -16.15%, TXN -16.77%, MRVL -26.02%, MU -27.47%, KLAC -38.42% (SMH -19.30%).",
+      "date": "2026-06-22 to 2026-10-16",
+      "source_title": "Robinhood get_equity_historicals / get_equity_quotes via SMH_calc.py (retrieved 2026-10-18T20:21-20:26Z)",
+      "url": ""
+    }
+  ],
+  "bull_case": [
+    {
+      "point": "Foundry demand is still accelerating",
+      "evidence": "TSMC Q3 2026 revenue $46.72B (+41.2% y/y) beat the top of guidance; Q4 guide $52.3-54.3B (midpoint about +58% y/y); CEO said AI demand shows no signs of slowing. TSMC is 9.32% of SMH.",
+      "source_title": "XenoSpectrum - TSMC Q3 2026 gross margin and capex (2026-10-16)",
+      "url": "https://xenospectrum.com/en/tsmc-q3-2026-gross-margin-capex/"
+    },
+    {
+      "point": "Equipment outlook keeps getting raised",
+      "evidence": "ASML raised FY2026 sales guidance to EUR 44-45B (third raise this year), guided Q4 to EUR 14.2-15.2B, and said some customers want to place orders for 2029-2030.",
+      "source_title": "MarketCapOf - ASML Q3 2026 results (2026-10-14)",
+      "url": "https://marketcapof.com/news/asml-stock-earnings-q3-revenue-miss/"
+    },
+    {
+      "point": "Hyperscaler capex budgets were raised, not cut",
+      "evidence": "About $725B combined 2026 hyperscaler capex with $950B-$1.2T expected for 2027; Amazon raised to $220B and Meta to $130-145B.",
+      "source_title": "Crypto Briefing - hyperscaler capex nears $725B (2026-08-03)",
+      "url": "https://cryptobriefing.com/amazon-meta-microsoft-ai-earnings-surge/"
+    },
+    {
+      "point": "Custom AI silicon pipeline is large",
+      "evidence": "Broadcom targets AI chip revenue rising from about $58B this fiscal year to $230B in FY2028; AI semiconductor revenue was about $17B in fiscal Q3 with about $22B expected in Q4.",
+      "source_title": "investingLive - Broadcom CEO targets $230B (2026-10-12)",
+      "url": "https://investinglive.com/stocks/broadcom-ceo-likens-ai-boom-to-a-casino-even-as-he-targets-230-billion-in-chip-sales/"
+    },
+    {
+      "point": "Pullback is within this year's range and the largest holding has held up",
+      "evidence": "SMH already recovered +25.72% from a -24.62% trough (Jul 29) once this year; it is still +49.89% YTD and +57.24% over 1 year, and NVDA (20.06% weight) is +2.63% since SMH's high.",
+      "source_title": "Robinhood get_equity_historicals / get_equity_quotes via SMH_calc.py (retrieved 2026-10-18T20:21-20:26Z)",
+      "url": ""
+    }
+  ],
+  "bear_case": [
+    {
+      "point": "Rates are moving against long-duration growth stocks",
+      "evidence": "Sept CPI 3.7% y/y (above forecast); Fed already raised to 3.75-4.00% in September; December hike odds 74.3% (vs 50.2% a month earlier) and the 10-year yield about 5.09%.",
+      "source_title": "ROIC.ai (2026-10-14); ts2.tech (2026-10-16)",
+      "url": "https://www.roic.ai/news/all-eyes-on-warsh-as-september-inflation-surprise-rattles-markets-10-14-2026"
+    },
+    {
+      "point": "AI financing and return-on-spend doubts",
+      "evidence": "OpenAI annualized revenue reported near $50B vs about $70B previously reported; Broadcom's CEO warned financing may be the main constraint; CoreWeave (about $50B debt, 2031 bonds yielding above 16%) fell more than 15% on Oct 14.",
+      "source_title": "Placera/Canada NewsWire (2026-10-10); Gotrade (2026-10-16)",
+      "url": "https://www.heygotrade.com/en/news/nvidia-nvda-stock-news-october-16-2026/"
+    },
+    {
+      "point": "Valuation leaves little room for misses",
+      "evidence": "Robinhood reports SMH P/E 38.57 and P/B 11.67; ASML traded at about 56x earnings and dipped on a roughly $50M revenue miss despite raised guidance.",
+      "source_title": "mcp__robinhood__get_equity_fundamentals (2026-10-18T20:21:36Z); MarketCapOf (2026-10-14)",
+      "url": "https://marketcapof.com/news/asml-stock-earnings-q3-revenue-miss/"
+    },
+    {
+      "point": "Memory supply/pricing risk",
+      "evidence": "SK Hynix and Samsung plan a combined $548B over five years to double DRAM capacity, and China's CXMT unveiled a 4F2 DRAM design; Micron (4.68%) is -27.47% since SMH's high.",
+      "source_title": "Female Invest - Why chipmakers are having a brutal July; StockWireX CXMT (2026-10-12)",
+      "url": "https://www.femaleinvest.com/inspiration-articles/ddd---why-chipmakers-are-having-a-brutal-july"
+    },
+    {
+      "point": "Concentration and crowded positioning",
+      "evidence": "25-stock cap-weighted index; NVDA 20.06% and top-10 67.93% of assets. Goldman flagged rising retail margin debt and levered-ETF assets in July, and SMH's last 5 sessions were -10.53% on Oct-16 volume 2.44x its 30-day average.",
+      "source_title": "VanEck holdings (as of 2026-10-15); The Star/Reuters (2026-07-17)",
+      "url": "https://www.thestar.com.my/tech/tech-news/2026/07/17/chipmakers-and-other-high-flying-stocks-slide-as-ai-trade-wobbles"
+    }
+  ],
+  "data_gaps": [
+    "mcp__AlphaVantage__TIME_SERIES_DAILY outputsize=full is premium-only on this key (first call also hit the 1 req/sec limit). Primary daily series is therefore mcp__robinhood__get_equity_historicals (day, regular session, split-adjusted, 2025-10-01..2026-10-16). It was verified against AV TIME_SERIES_DAILY compact (100 days, 0.0000% max OHLC difference) and AV TIME_SERIES_WEEKLY (full history, 52w high/low identical).",
+    "No split in the window: the AV raw/Robinhood split-adjusted close ratio was 1.0000 on all 55 matching dates, and no day-over-day move exceeded 25%.",
+    "mcp__AlphaVantage__NEWS_SENTIMENT is premium-only, so it was not available; news came from WebSearch/WebFetch.",
+    "AUM disagreement > 0.5%: AV ETF_PROFILE net_assets $74.90B vs VanEck TNA $65.68B (2026-10-16) and Robinhood market cap $65.40B. The AV figure looks stale; VanEck is treated as authoritative.",
+    "AV ETF_PROFILE holdings weights differ slightly from VanEck's (max 0.14 pct-pts on top-10; AV ranks KLAC 7th, VanEck 10th). VanEck (as of 2026-10-15) is used. VanEck lists 'Total Holdings: 26', which counts cash lines; there are 25 equities.",
+    "Component Oct-16 prices are Robinhood get_equity_quotes last_trade_price at about 19:59:59Z (final regular-session print), not official settled closes: Robinhood daily bars for components did not yet include 2026-10-16 at retrieval.",
+    "Returns are price-only; dividends are excluded (not total return).",
+    "Robinhood's quote 'close' field returned the prior session (2026-10-15, 558.84). The Oct-16 official close of 539.79 comes from AV GLOBAL_QUOTE/AV daily and matches Robinhood's daily bar.",
+    "No catalyst found for SMH's -4.75% drop on 2026-09-14 (a TechFlow item reported broad premarket chip declines with no stated cause).",
+    "Tariffs/export controls: no source tied them directly to the Jun-Oct decline. Background only: Commerce Secretary Lutnick confirmed plans for additional tariffs on servers/laptops (Cryptobriefing, 2026-09-02, https://cryptobriefing.com/trump-tariffs-imported-semiconductors-2026/); a 25% Section 232 tariff on select advanced chips has applied since a 2026-01-14 proclamation. An Oct-15 ROIC.ai piece explicitly did not cite tariffs as a trigger.",
+    "No SMH fund-flow data found for Jun-Oct 2026 (the TipRanks outflow article found dated from Aug 2025 and was not used).",
+    "SOX close for 2026-10-16 not found; SOXX -4.14% used as reported.",
+    "Fed-hike odds after Sept CPI differ by source (about 37% vs about 52% for October); both reported as a range.",
+    "Several news sources are secondary/aggregator sites (Crypto Briefing, StockWireX, ts2.tech, MarketCapOf, SentiSense, ROIC.ai). Their figures were not independently verified against primary wire copy.",
+    "Excluded an undated StockStory/TradingView article on an ASML 'cannot guarantee growth' warning; it references a July 9 tariff deadline and appears to be from 2025.",
+    "VanEck page retrieval times are approximate (fetched between the logged timestamps 2026-10-18T20:22:45Z and 20:30:37Z).",
+    "Context before the high (not part of the drop): Broadcom's guidance triggered a ~10.3% one-day SOX drop on 2026-06-05; SMH then recovered to its 2026-06-22 high."
+  ],
+  "calc_output": "Daily source rows: 263  (2025-10-01 .. 2026-10-16)\nLast trading date: 2026-10-16 (Friday)\n52w window: 2025-10-16 .. 2026-10-16  (252 trading days)\n\n--- 52-week stats (primary: Robinhood daily, split-adjusted) ---\ncurrent (last close)      : 539.79 on 2026-10-16\nhigh_52w_intraday         : 671.83 on 2026-06-22\nhigh_52w_close            : 668.91 on 2026-06-22\nlow_52w_intraday          : 315.05 on 2025-11-21\nlow_52w_close             : 325.10 on 2025-11-20\ndrop_pct_from_intraday_hi : -19.65%\ndrop_pct_from_closing_hi  : -19.30%\ndrop_dollars (vs intraday): -132.04\ndrop_dollars (vs close hi): -129.12\ntrading days since intraday high: 82\ntrading days since closing high : 82\ngain from 52w intraday low: 71.33%\n\n--- Returns (price only, close-to-close) ---\n 1m: -3.71%  (base close 560.61 on 2026-09-17)\n 3m: -3.41%  (base close 558.83 on 2026-07-20)\nytd: +49.89%  (base close 360.13 on 2025-12-31)\n 1y: +57.24%  (base close 343.30 on 2025-10-16)\n\n--- Path since the intraday high ---\nlowest close after high : 504.22 on 2026-07-29 (-24.62% vs closing high)\nhighest close after that: 633.90 on 2026-10-05 (-5.23% vs closing high)\nmove from that rebound peak to now: -14.85% over 9 trading days\nlast 5 trading days: -10.53% (from 603.33 on 2026-10-09)\nlast 10 trading days: -14.40% (from 630.60 on 2026-10-02)\nhigh-volume day 2026-07-27: vol 38,682,157, close 548.55 (-2.25% d/d)\nhigh-volume day 2026-07-17: vol 22,083,883, close 556.53 (-2.18% d/d)\nhigh-volume day 2026-07-02: vol 21,334,058, close 592.29 (-4.54% d/d)\nlargest 1-day declines since high: 2026-06-23 -7.01%, 2026-07-01 -5.40%, 2026-07-29 -4.79%, 2026-09-14 -4.75%, 2026-07-02 -4.54%\nSMH daily change on driver dates:\n  2026-06-23: close 622.05  -7.01%\n  2026-07-01: close 620.46  -5.40%\n  2026-07-02: close 592.29  -4.54%\n  2026-07-07: close 581.45  -3.78%\n  2026-07-17: close 556.53  -2.18%\n  2026-07-27: close 548.55  -2.25%\n  2026-07-28: close 529.60  -3.45%\n  2026-07-29: close 504.22  -4.79%\n  2026-10-08: close 607.27  -2.84%\n  2026-10-12: close 590.99  -2.05%\n  2026-10-13: close 588.12  -0.49%\n  2026-10-14: close 564.74  -3.98%\n  2026-10-15: close 558.84  -1.04%\n  2026-10-16: close 539.79  -3.41%\nSMH week ending 2026-07-17: -8.92% (from 611.03 on 2026-07-10)\nSMH week ending 2026-10-16: -10.53% (from 603.33 on 2026-10-09)\nRebound 2026-07-29 close 504.22 -> 2026-10-05 close 633.90: +25.72%\n\nWrote SMH_weekly.csv with 53 weekly closes (2025-10-17 .. 2026-10-16)\n\n--- Cross-checks ---\nAV GLOBAL_QUOTE price 539.79 (latest trading day 2026-10-16); diff vs primary +0.000%\nRH quote last_trade_price 539.62 @ 2026-10-16T19:59:59.99220837Z; diff vs primary close -0.031%  (RH 'close' field = 558.84 for 2026-10-15, i.e. prior session)\nRH fundamentals high_52_weeks 671.83 on 2026-06-22; diff vs computed +0.000%\nRH fundamentals low_52_weeks  315.05 on 2025-11-21; diff vs computed +0.000%\nAV compact daily vs RH daily: 100 overlapping days, max OHLC abs diff 0.0000%, AV dates missing in RH: []\nAV compact daily max high 671.83 on 2026-06-22 (covers 2026-05-27..2026-10-16)\nAV weekly (raw) 52w high 671.83 (week ending 2026-06-26), low 315.05 (week ending 2025-11-21)\nSplit check: AV raw weekly close / RH split-adj close on 55 matching dates: min 1.0000, max 1.0000 -> no split in window\nDay-over-day close moves >25% in primary series: none\n\n--- Fund facts (AV ETF_PROFILE, last_updated 2026-10-16 00:01 UTC) ---\nnet_assets 74,900,000,000; net_expense_ratio 0.35%; turnover 12%; inception 2011-12-20\n  NVDA  NVIDIA CORP                                        20.20%\n  TSM   TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD ADR      9.38%\n  AMD   ADVANCED MICRO DEVICES INC                         5.59%\n  AVGO  BROADCOM INC                                       5.52%\n  TXN   TEXAS INSTRUMENTS INC                              4.92%\n  MU    MICRON TECHNOLOGY INC                              4.54%\n  KLAC  KLA CORP                                           4.48%\n  MRVL  MARVELL TECHNOLOGY INC                             4.47%\n  ADI   ANALOG DEVICES INC                                 4.44%\n  ASML  ASML HOLDING NV ADR                                4.38%\ntop-1 weight 20.20%; top-5 45.61%; top-10 67.92%; holdings count 25\nRH fundamentals: pe_ratio 38.57, pb_ratio 11.67, avg volume 30d 7,547,639, Oct-16 volume 18,387,491 (2.44x 30d avg)\nAV ETF_PROFILE net_assets vs RH market_cap: 74.90B vs 65.40B (diff +14.5%)\n\n--- Top-10 holdings: 2026-06-22 close -> 2026-10-16 final regular-session trade (RH get_equity_quotes last_trade_price; not the official settled close) ---\n  KLAC     269.16 ->    165.75   -38.42% since SMH high | Oct-16 day  -4.99% | AV weight 4.48%\n  MU      1211.38 ->    878.67   -27.47% since SMH high | Oct-16 day  -5.65% | AV weight 4.54%\n  MRVL     307.86 ->    227.74   -26.02% since SMH high | Oct-16 day  -5.60% | AV weight 4.47%\n  TXN      332.28 ->    276.55   -16.77% since SMH high | Oct-16 day  -0.92% | AV weight 4.92%\n  AVGO     392.13 ->    328.81   -16.15% since SMH high | Oct-16 day  -4.51% | AV weight 5.52%\n  ASML    1929.25 ->   1641.54   -14.91% since SMH high | Oct-16 day  -0.96% | AV weight 4.38%\n  TSM      467.67 ->    412.51   -11.79% since SMH high | Oct-16 day  -2.31% | AV weight 9.38%\n  ADI      445.48 ->    395.33   -11.26% since SMH high | Oct-16 day  -2.13% | AV weight 4.44%\n  AMD      551.63 ->    528.76    -4.15% since SMH high | Oct-16 day  -5.95% | AV weight 5.59%\n  NVDA     208.65 ->    214.14    +2.63% since SMH high | Oct-16 day  -1.42% | AV weight 20.20%\n  SMH     668.91 ->    539.79   -19.30% since high      | Oct-16 day  -3.41%\n\n--- Issuer (VanEck) cross-check ---\nVanEck top-5 weight 45.45%; top-10 weight 67.93%\nClose vs VanEck NAV (2026-10-16): 539.79 vs 539.75 -> premium +0.007%\nAV ETF_PROFILE net_assets vs VanEck TNA: 74.90B vs 65.68B (diff +14.0%)\nMax abs weight diff AV ETF_PROFILE vs VanEck (top-10): 0.14 pct-pts\n"
+}

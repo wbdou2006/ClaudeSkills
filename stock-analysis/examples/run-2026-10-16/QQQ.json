@@ -1,0 +1,221 @@
+{
+  "ticker": "QQQ",
+  "fund_name": "Invesco QQQ Trust, Series 1 (marketed by Invesco as 'Invesco QQQ ETF'; converted from a UIT to an open-end ETF, trading as such from 2025-12-22)",
+  "issuer": "Invesco (Invesco Capital Management LLC)",
+  "index_tracked": "Nasdaq-100 Index",
+  "expense_ratio": {
+    "value": 0.18,
+    "unit": "percent",
+    "source": "Invesco QQQ page https://www.invesco.com/qqq-etf/en/home.html ('total expense ratio is 0.18%'); matches StockAnalysis.com (0.18%) and ETF.com (cut from 0.20% to 0.18% at the conversion). The SEC N-CSRS for the six months ended 2026-03-31 shows 0.19% for that period, which spans the switch.",
+    "retrieved_at": "2026-10-18T20:34:40Z"
+  },
+  "last_trading_date": "2026-10-16",
+  "current_price": {
+    "value": 709.8,
+    "basis": "official close",
+    "date": "2026-10-16",
+    "source": "Robinhood mcp__robinhood__get_equity_historicals (day, split-adjusted, regular session) last bar close; matches StockAnalysis.com and finanzen.net last close of 709.80",
+    "retrieved_at": "2026-10-18T20:21:46Z"
+  },
+  "high_52w_intraday": {
+    "value": 762.86,
+    "date": "2026-10-06",
+    "source": "Python max(high) over Robinhood daily bars 2025-10-16..2026-10-16; equals Robinhood get_equity_fundamentals high_52_weeks=762.86 dated 2026-10-06",
+    "retrieved_at": "2026-10-18T20:21:46Z"
+  },
+  "high_52w_close": {
+    "value": 759.66,
+    "date": "2026-10-06"
+  },
+  "low_52w_intraday": {
+    "value": 555.6,
+    "date": "2026-03-30"
+  },
+  "drop_pct_from_intraday_high": -6.96,
+  "drop_pct_from_closing_high": -6.56,
+  "drop_dollars": -53.06,
+  "trading_days_since_high": 8,
+  "returns_pct": {
+    "1m": -0.99,
+    "3m": 1.97,
+    "ytd": 15.54,
+    "1y": 18.3,
+    "note": "Price returns only, dividends excluded. 1m = 21 trading days (base 2026-09-17), 3m = 63 trading days (base 2026-07-20), YTD base is the 2025-12-31 close of 614.31, 1y base is the 2025-10-16 close of 599.99."
+  },
+  "cross_check": {
+    "source": "Robinhood mcp__robinhood__get_equity_quotes plus get_equity_fundamentals; web: StockAnalysis.com/etf/qqq, finanzen.net",
+    "retrieved_at": "2026-10-18T20:21:46Z",
+    "price": 709.86,
+    "high_52w": 762.86,
+    "note": "Robinhood quote last_trade_price is 709.86 (last regular-session print at 19:59:59 UTC on 10-16), 0.008% above the 709.80 bar close. StockAnalysis.com and finanzen.net both show a 709.80 close. The Robinhood quote's 'close' field still reported 2026-10-15 (728.00) at retrieval time. The 52-week high of 762.86 on 2026-10-06 and low of 555.60 on 2026-03-30 match Robinhood fundamentals and StockAnalysis exactly. No disagreement above 0.5% on price or high. Caveat: the primary series and the main cross-check both come from Robinhood, because Alpha Vantage was unavailable; the web quotes are the only independent check on price. Separately, the two sources' P/E figures differ by about 17.6% (Robinhood 34.15 vs StockAnalysis 29.05), probably because they use different methods."
+  },
+  "top_holdings": [
+    {
+      "name": "NVIDIA Corp.",
+      "symbol": "NVDA",
+      "weight_pct": 8.14
+    },
+    {
+      "name": "Apple Inc.",
+      "symbol": "AAPL",
+      "weight_pct": 7.91
+    },
+    {
+      "name": "Microsoft Corp.",
+      "symbol": "MSFT",
+      "weight_pct": 6.2
+    },
+    {
+      "name": "Micron Technology",
+      "symbol": "MU",
+      "weight_pct": 4.32
+    },
+    {
+      "name": "Amazon.com",
+      "symbol": "AMZN",
+      "weight_pct": 4.25
+    },
+    {
+      "name": "Advanced Micro Devices",
+      "symbol": "AMD",
+      "weight_pct": 3.76
+    },
+    {
+      "name": "Meta Platforms (Class A)",
+      "symbol": "META",
+      "weight_pct": 3.33
+    },
+    {
+      "name": "Alphabet (Class A)",
+      "symbol": "GOOGL",
+      "weight_pct": 3.15
+    },
+    {
+      "name": "Tesla",
+      "symbol": "TSLA",
+      "weight_pct": 2.94
+    },
+    {
+      "name": "Alphabet (Class C)",
+      "symbol": "GOOG",
+      "weight_pct": 2.94
+    }
+  ],
+  "holdings_source": "StockAnalysis.com https://www.stockanalysis.com/etf/qqq/holdings (third-party aggregator; the Invesco holdings page failed to load). Reference: the SEC Form N-CSRS (https://www.sec.gov/Archives/edgar/data/0001067839/000119312526250483/8deb6f921189c0e.htm) as of 2026-03-31 listed NVDA 8.68, AAPL 7.63, MSFT 5.63, AMZN 4.58, TSLA 3.80, META 3.46, WMT 3.44, GOOGL 3.43, GOOG 3.19, AVGO 3.00. Since then MU and AMD have entered the top 10 and AVGO and WMT have dropped out.",
+  "holdings_as_of": "2026-10-16",
+  "drop_summary": "QQQ hit a record on 2026-10-06 (762.86 intraday, 759.66 close) and closed at 709.80 on 2026-10-16, which is 6.96% below the intraday high and 6.56% below the closing high. That is a pullback, not a bear market: the fund is still up 15.54% YTD and 27.75% above its March low. Most of the drop came in the week of Oct 12-16 (-5.52%). It was led by chip stocks (AMD -18.6%, MU -16.0%, NVDA -10.5% from Oct 6 to Oct 16) as doubts grew about AI-capex payback and debt funding, China's CXMT made memory-competition news, and hot CPI/PPI data lifted odds of a December Fed hike with the 10-year yield near 5.1-5.3%.",
+  "drivers": [
+    {
+      "driver": "AI chip selloff: semis led the decline",
+      "detail": "From the Oct 6 high to the Oct 16 close, AMD fell 18.58%, MU 15.95%, AVGO 12.52% and NVDA 10.50%, while AAPL rose 2.95% and MSFT was flat (Robinhood daily closes, computed in QQQ_calc.py). NVDA, MU and AMD alone account for roughly 2.5 of QQQ's 6.6-point drop by back-of-envelope weighting. On Oct 14 a chip index fell 4.3%, about 12% over six sessions, on worries about rates, valuations and AI infrastructure costs.",
+      "date": "2026-10-06 to 2026-10-16",
+      "source_title": "Stocks, Bonds Fall as CPI Data Fuel Fed Hike Bets: Markets Wrap (Bloomberg via Swissinfo)",
+      "url": "https://www.swissinfo.ch/eng/stocks,-bonds-fall-as-cpi-data-fuel-fed-hike-bets:-markets-wrap/92211728"
+    },
+    {
+      "driver": "Doubts about AI capex payback and debt-funded spending (Broadcom CEO remarks; CoreWeave credit stress)",
+      "detail": "On Oct 12 Broadcom CEO Hock Tan said many AI investors don't understand what they own and compared the mood to a casino. On Oct 14 CoreWeave bonds traded at yields near 15% (distressed levels), the stock fell about 16%, and Oracle, Nebius and Dell sold off with it. Per LSEG, Alphabet, Amazon, Meta and Oracle have issued more than $228B of bonds this year. The Oct 16 AP wrap said investors doubt big tech can keep borrowing to fund AI as yields rise.",
+      "date": "2026-10-12 to 2026-10-16",
+      "source_title": "CoreWeave bonds trade like distressed debt as AI spending outpaces balance sheets (investingLive)",
+      "url": "https://investinglive.com/stocks/coreweave-bonds-trade-like-distressed-debt-as-ai-spending-outpaces-balance-sheets/"
+    },
+    {
+      "driver": "China memory competition (CXMT 4F2 DRAM) hit memory names",
+      "detail": "Over the Oct 10-11 weekend CXMT said it had made key progress on a denser 4F2 DRAM design and aims to ship server DDR5 on it by end-2026. Micron fell about 3.9% on Oct 12 and kept sliding. SK Hynix, Samsung and Kioxia fell sharply in Asia on Oct 13. MU is QQQ's #4 holding at a 4.32% weight.",
+      "date": "2026-10-12 to 2026-10-13",
+      "source_title": "Micron Falls 5% as China's CXMT Targets Server Memory; SanDisk Drops 4% (24/7 Wall St.)",
+      "url": "https://247wallst.com/investing/2026/10/13/micron-falls-5-as-chinas-cxmt-targets-server-memory-sandisk-drops-4/"
+    },
+    {
+      "driver": "Hot September CPI and PPI raised December Fed-hike odds",
+      "detail": "September CPI (out Oct 14) came in at 3.7% y/y vs 3.6% expected, with core at 2.6% vs 2.5%. QQQ fell 1.97% that day, its worst session since July per Bloomberg. PPI (out Oct 15) jumped 1.3% m/m and 6.3% y/y, the largest annual rise since Dec 2022. Per the AP, December hike odds rose to 74.3% from 50.2% a month earlier. This follows the Fed's 25bp hike on Sept 16 to 3.75-4.00%, its first since 2023.",
+      "date": "2026-10-14 to 2026-10-15",
+      "source_title": "US September CPI 3.7% vs 3.6% expected (investingLive); Wholesale inflation jumped by most in four years (AP via Spectrum News)",
+      "url": "https://investinglive.com/news/us-september-cpi-vs-3-6-expected-0/"
+    },
+    {
+      "driver": "High long-term yields and oil from the US-Iran war",
+      "detail": "The 10-year Treasury yield topped 5.30% earlier in October (highest since 2002) and was 5.09% on Oct 16. Brent rose 3.7% to $109.86 on Oct 16 and about 4% on Oct 8, after remarks implying the Iran conflict would last past the midterms. That lifted hike odds and coincided with a defensive rotation into energy and staples while tech (XLK) fell 2.09% on Oct 8.",
+      "date": "2026-10-08 to 2026-10-16",
+      "source_title": "US markets weighed down by extended sell-off in the tech sector (AP via AJC)",
+      "url": "https://www.ajc.com/news/2026/10/us-markets-weighed-down-by-extended-sell-off-in-the-tech-sector/"
+    },
+    {
+      "driver": "Broad Oct 16 tech selloff to cap the week",
+      "detail": "On Oct 16 QQQ fell 2.50% (Robinhood daily data). Per the AP, the Nasdaq composite lost 2.1% and posted its worst week since June. AMD fell 6%, Intel 5.8%, Micron 5.6%, Broadcom 4.5%, Meta 3.7% and Alphabet 2.5%. Only 7 of 75 S&P tech stocks rose that day.",
+      "date": "2026-10-16",
+      "source_title": "US markets weighed down by extended sell-off in the tech sector (AP via AJC)",
+      "url": "https://www.ajc.com/news/2026/10/us-markets-weighed-down-by-extended-sell-off-in-the-tech-sector/"
+    }
+  ],
+  "bull_case": [
+    {
+      "point": "AI demand signals from the supply chain are still strong",
+      "evidence": "ASML (Oct 14) said customers are raising equipment demand forecasts, some want to order for 2029-2030, and planned supply for 2027-2028 won't fully meet demand. TSMC (Oct 15) reported Q3 revenue of $46.72B (+41.2% y/y), a 66.4% gross margin, and Q4 guidance of $52.3-54.3B.",
+      "source_title": "ASML Q3 2026 press release (SEC 6-K); TSMC Q3 2026 results (SEC 6-K)",
+      "url": "https://www.sec.gov/Archives/edgar/data/0001046179/000104617926000726/a3q26e_withguidancexfinal.htm"
+    },
+    {
+      "point": "Earnings estimates are still rising, led by tech",
+      "evidence": "Zacks (Oct 12) expects S&P 500 Q3 earnings up 24.3% y/y with Tech up 43.3%, and says estimate revisions have been positive and broad-based for almost a year, with 2027 estimates also rising.",
+      "source_title": "Estimates keep rising as Q3 earnings season takes center stage (Zacks via FXStreet)",
+      "url": "https://www.fxstreet.com/news/estimates-keep-rising-as-q3-earnings-season-takes-center-stage-202610120625"
+    },
+    {
+      "point": "The drawdown is modest and the longer trend is intact",
+      "evidence": "QQQ is 6.96% below its intraday high, still up 15.54% YTD and 18.30% over one year, and 27.75% above its 2026-03-30 low (Robinhood data, QQQ_calc.py). Non-chip mega caps held up: AAPL rose 2.95% and MSFT was flat from Oct 6 to Oct 16.",
+      "source_title": "Robinhood get_equity_historicals (QQQ, holdings); QQQ_calc.py output",
+      "url": ""
+    },
+    {
+      "point": "Near-term catalysts are close: mega-cap earnings in late October",
+      "evidence": "Tesla reports Oct 21; Alphabet, Meta and Microsoft Oct 28; Amazon Oct 29; Apple Nov 2; Nvidia around Nov 18. Brooke Thackray says strong Mag 7 results could restart the rally.",
+      "source_title": "Technology earnings are the make or break event for Q3 earnings (BNN Bloomberg, Brooke Thackray)",
+      "url": "https://www.bnnbloomberg.ca/investing/opinion/2026/10/15/technology-earnings-are-the-make-or-break-event-for-q3-earnings-brooke-thackray/"
+    }
+  ],
+  "bear_case": [
+    {
+      "point": "Rates moving the wrong way for long-duration growth stocks",
+      "evidence": "The Fed hiked 25bp on Sept 16 to 3.75-4.00%, and most officials see another hike likely by year-end. Hot CPI and PPI pushed December hike odds to 74.3% (AP). The 10-year yield topped 5.30% in October, the highest since 2002.",
+      "source_title": "Fed Raises Rates for 1st Time Since 2023 (Trading Economics); AP market wrap Oct 16",
+      "url": "https://tradingeconomics.com/united-states/interest-rate/news/584300"
+    },
+    {
+      "point": "Rich valuation leaves little room for disappointment",
+      "evidence": "Robinhood fundamentals show QQQ at a P/E of 34.15 and P/B of 9.22. StockAnalysis shows a trailing P/E of 29.05 and forward P/E of 21.57 (the methods differ). Thackray warns Q3 tech results below the high bar could be a serious problem, and that earnings growth should slow toward Q2 2027 as base effects reverse.",
+      "source_title": "Robinhood get_equity_fundamentals; StockAnalysis.com QQQ; BNN Bloomberg (Thackray)",
+      "url": "https://stockanalysis.com/etf/qqq/"
+    },
+    {
+      "point": "Heavy concentration in a few AI-linked names",
+      "evidence": "The top 10 holdings make up 46.94% of the fund (StockAnalysis, 2026-10-16). NVDA, MU and AMD alone are 16.22%, and those three explain roughly 2.5 of the 6.6-point drop since the high (QQQ_calc.py).",
+      "source_title": "StockAnalysis.com QQQ holdings; QQQ_calc.py output",
+      "url": "https://www.stockanalysis.com/etf/qqq/holdings"
+    },
+    {
+      "point": "AI build-out increasingly funded by debt, with credit stress showing at the edges",
+      "evidence": "Per LSEG, Alphabet, Amazon, Meta and Oracle had issued more than $228B in bonds this year as of Oct 13, more than double their 2025 total. CoreWeave debt traded near 15% yields on Oct 14. JPMorgan sees hyperscaler capex near $800B this year and above $1T/yr by 2027.",
+      "source_title": "CoreWeave bonds trade like distressed debt as AI spending outpaces balance sheets (investingLive)",
+      "url": "https://investinglive.com/stocks/coreweave-bonds-trade-like-distressed-debt-as-ai-spending-outpaces-balance-sheets/"
+    },
+    {
+      "point": "New competitive threat in memory from China",
+      "evidence": "Counterpoint data cited by BabyPips shows CXMT reached 10% of global DRAM revenue in Q2 2026, up from 4% a year earlier, and it is targeting high-margin server DDR5. Micron is now QQQ's #4 holding (4.32%).",
+      "source_title": "Chip stocks October 2026: Broadcom casino comment, CXMT DRAM (BabyPips)",
+      "url": "https://www.babypips.com/news/headline-chip-stocks-october-2026-broadcom-casino-comment-cxmt-dram"
+    }
+  ],
+  "data_gaps": [
+    "Alpha Vantage was unavailable all session. TIME_SERIES_DAILY with outputsize=full returned a per-second rate limit, then 'premium feature'. outputsize=compact, GLOBAL_QUOTE and ETF_PROFILE all hit the 25-requests/day limit on the shared key (last attempt about 20:22-20:32 UTC). The primary daily series is therefore Robinhood get_equity_historicals (split-adjusted, regular session), not Alpha Vantage.",
+    "Because the primary series and the main cross-check are both Robinhood, the only independent price checks are web pages (StockAnalysis.com and finanzen.net, both 709.80 on 10-16). StockAnalysis also independently confirms the 52-week high and low.",
+    "QQQ_daily.csv was transcribed from the Robinhood tool output. It was checked against a separate Robinhood weekly call (0 high/low mismatches over 52 weeks) and for OHLC consistency (0 violations).",
+    "The Invesco holdings page failed to load, so the top holdings come from StockAnalysis.com (third party) as of 2026-10-16, cross-referenced to the SEC N-CSRS as of 2026-03-31. AVGO's current weight is not in the source's top-10 list.",
+    "The holding contribution figures (pp) are rough estimates that back out starting weights from end weights and ignore intra-period rebalancing.",
+    "The Robinhood quote's 'close' field still showed 2026-10-15 (728.00) at retrieval, so the official 10-16 settled close comes from the daily bar plus web sources, not that field.",
+    "P/E is not consistent across sources: Robinhood 34.15 vs StockAnalysis 29.05 (trailing) and 21.57 (forward). Methods differ and neither is the issuer's figure.",
+    "Returns are price-only and exclude dividends. No AV NEWS_SENTIMENT data, because the rate limit blocked it.",
+    "The Oct 7 META decline (-2.4%) and the Oct 13 index moves have no single clearly cited cause beyond the general AI/chip sentiment covered above."
+  ],
+  "calc_output": "=== QQQ trailing 52-week stats (source: Robinhood daily, split-adjusted) ===\nrows in file: 263  first: 2025-10-01  last: 2026-10-16\nwindow: 2025-10-16 .. 2026-10-16  (252 trading days)\ncurrent (last close 2026-10-16): 709.80\nhigh_52w_intraday: 762.86 on 2026-10-06\nhigh_52w_close:    759.66 on 2026-10-06\nlow_52w_intraday:  555.60 on 2026-03-30\ndrop_pct_from_intraday_high: -6.96%\ndrop_pct_from_closing_high:  -6.56%\ndrop_dollars (vs intraday high): -53.06\ntrading_days_since_high: 8\nrise from 52w intraday low: 27.75%\nreturns (price only, excl. dividends):\n  1m  (21 td, base 2026-09-17 close 716.92): -0.99%\n  3m  (63 td, base 2026-07-20 close 696.06): 1.97%\n  ytd (base 2025-12-31 close 614.31): 15.54%\n  1y  (base 2025-10-16 close 599.99): 18.30%\n\n=== Daily closes since the 52w high ===\n  2026-10-06  close 759.66  day +0.46%  vs closing high +0.00%\n  2026-10-07  close 757.73  day -0.25%  vs closing high -0.25%\n  2026-10-08  close 747.58  day -1.34%  vs closing high -1.59%\n  2026-10-09  close 751.27  day +0.49%  vs closing high -1.10%\n  2026-10-12  close 746.04  day -0.70%  vs closing high -1.79%\n  2026-10-13  close 743.57  day -0.33%  vs closing high -2.12%\n  2026-10-14  close 728.95  day -1.97%  vs closing high -4.04%\n  2026-10-15  close 728.00  day -0.13%  vs closing high -4.17%\n  2026-10-16  close 709.80  day -2.50%  vs closing high -6.56%\nweek of 2026-10-12..16: 751.27 (10-09) -> 709.80: -5.52%\n\nweekly closes saved: 53 weeks, 2025-10-17 .. 2026-10-16\nsplit check: 52 weeks compared (unadjusted weekly vs split-adjusted daily); ratio min 1.000000 max 1.000000 -> NO split detected\ntranscription check: 52 weeks; weekly-bar high mismatches 0, low mismatches 0\n\n=== Cross-checks ===\n  price  Robinhood get_equity_quotes last_trade_price (regular session): 709.86  diff vs primary +0.008%\n  price  StockAnalysis.com last close 2026-10-16: 709.80  diff vs primary +0.000%\n  price  finanzen.net last price 2026-10-16: 709.80  diff vs primary +0.000%\n  52wHi  Robinhood get_equity_fundamentals high_52_weeks (2026-10-06): 762.86  diff vs primary +0.000%\n  52wHi  StockAnalysis.com 52w range high: 762.86  diff vs primary +0.000%\n  52wLo  Robinhood fundamentals low_52_weeks (2026-03-30): 555.60  diff vs primary +0.000%\n\n=== Top holdings: close 2026-10-06 -> 2026-10-16 (QQQ -6.56%) ===\n  NVDA   -10.50%  wt_end 8.14%  est wt_start 8.50%  approx contrib -0.89 pp\n  AAPL    +2.95%  wt_end 7.91%  est wt_start 7.18%  approx contrib +0.21 pp\n  MSFT    -0.05%  wt_end 6.20%  est wt_start 5.80%  approx contrib -0.00 pp\n  MU     -15.95%  wt_end 4.32%  est wt_start 4.80%  approx contrib -0.77 pp\n  AMZN    -2.45%  wt_end 4.25%  est wt_start 4.07%  approx contrib -0.10 pp\n  AMD    -18.58%  wt_end 3.76%  est wt_start 4.31%  approx contrib -0.80 pp\n  META    -4.00%  wt_end 3.33%  est wt_start 3.24%  approx contrib -0.13 pp\n  GOOGL   -2.04%  wt_end 3.15%  est wt_start 3.00%  approx contrib -0.06 pp\n  TSLA    -6.82%  wt_end 2.94%  est wt_start 2.95%  approx contrib -0.20 pp\n  GOOG    -2.23%  wt_end 2.94%  est wt_start 2.81%  approx contrib -0.06 pp\n  AVGO   -12.52%  (weight not in top-10 source list)\n  top-10 approx combined contribution: -2.81 pp of QQQ's -6.56%\n  rest of index (approx): -3.76 pp\n  NVDA+MU+AMD approx contribution: -2.46 pp\n\n=== Concentration / size ===\n  top-10 weight sum (StockAnalysis, 2026-10-16): 46.94%\n  NVDA+MU+AMD weight (2026-10-16): 16.22%\n  top-10 weight sum (SEC N-CSRS, 2026-03-31): 46.84%\n  AUM StockAnalysis 489.15B vs Robinhood market_cap 479.08B: diff +2.10%\n  P/E Robinhood 34.15 vs StockAnalysis 29.05: diff +17.56%\n"
+}
