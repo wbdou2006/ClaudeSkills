@@ -1,6 +1,6 @@
 ---
 name: stock-analysis
-description: Research how far stocks or ETFs sit below their 52-week high, why they fell, and the bull and bear case, then publish a consistent HTML report and, if the user gives an email address, prepare a ready-to-send email of it. With no tickers named it uses a default watchlist (XLK, FTEC, QQQ, SMH, ARTY, S&P 500, Dow Jones). Use whenever the user lists tickers or asks for a market check, 52-week highs, drawdowns, "how much has X dropped", pullback analysis, or a drop/bull/bear report, even if they don't say "report".
+description: Research how far stocks or ETFs sit below their 52-week high, why they fell, and the bull and bear case, then save a consistent HTML report to the working directory and present it to the user, and, if the user gives an email address, prepare a ready-to-send email of it. With no tickers named it uses a default watchlist (XLK, FTEC, QQQ, SMH, ARTY, S&P 500, Dow Jones). Use whenever the user lists tickers or asks for a market check, 52-week highs, drawdowns, "how much has X dropped", pullback analysis, or a drop/bull/bear report, even if they don't say "report".
 ---
 
 # Stock analysis
@@ -43,7 +43,7 @@ The scripts do all the arithmetic and the HTML. Your job is the research and the
 3. Create a task list with:
    - one task per ticker
    - "Verify numbers"
-   - "Build and publish report"
+   - "Build and save report"
 
 ### 2. Fan out
 Spawn **one subagent per ticker**, in parallel and in the background. Each one's prompt is:
@@ -77,11 +77,13 @@ python3 $SKILL_DIR/scripts/build_report.py --dir $WORK_DIR --tickers <T...> \
 
 **Choosing the title:** pick a short, specific name, such as "Tech ETF Drawdowns" or "Chip Stock Pullbacks". Use the same title for repeat runs on the same basket.
 
-### 6. Publish
-Publish the HTML with the Artifact tool, using `icon: "chart"` and a one-sentence description that names the tickers and the as-of date.
+### 6. Save and present
+The build step already wrote the report to `$WORK_DIR/drawdown_report.html`. Do not publish it with the Artifact tool and do not upload it anywhere — it stays local to `$WORK_DIR`.
 
-- **Repeat run on the same basket:** if the user wants the old link kept, republish to that artifact's URL.
-- **Do not edit the generated HTML.** Report-wide changes belong in `build_report.py` or `assets/report.css`.
+- Tell the user the absolute path to `drawdown_report.html`.
+- Present it to them directly: open it with the browser-preview tool if one is available, or whatever "show this HTML file" capability exists in the current environment.
+- **Repeat run on the same basket:** reuse the same `$WORK_DIR` (or tell the user where the new one is) rather than trying to keep a stable published link — there isn't one.
+- **Do not edit the generated HTML by hand.** Report-wide changes belong in `build_report.py` or `assets/report.css`.
 
 ### 7. Email (only when the user gave an address)
 Skip this step unless the user's own message includes an email address, e.g. "…and email it to ana@example.com". If they say "email it to me" without an address, ask for one; never guess or reuse an address from elsewhere.
@@ -91,14 +93,13 @@ Skip this step unless the user's own message includes an email address, e.g. "�
 1. **Build the email.**
    ```
    python3 $SKILL_DIR/scripts/build_email.py --dir $WORK_DIR --tickers <T...> --to <address...> \
-     --report $WORK_DIR/drawdown_report.html --artifact-url <published link> --title "<same title>"
+     --report $WORK_DIR/drawdown_report.html --title "<same title>"
    ```
-   Exit code 2 means the address is invalid: ask the user to correct it. The script writes `drawdown_report.eml` (HTML + plain text, report attached, recipients and subject filled in), plus `email_body.html`, `email_body.txt` and `email.json`.
+   Exit code 2 means the address is invalid: ask the user to correct it. The script writes `drawdown_report.eml` (HTML + plain text, report attached, recipients and subject filled in), plus `email_body.html`, `email_body.txt` and `email.json`. There is no published link to pass — the full report only reaches the recipient as the attached HTML file.
 2. **Deliver it.** Send `drawdown_report.eml` with SendUserFile (display `attach`).
 3. **Tell the user how to send it**, in two or three lines:
    - Open the `.eml` in Outlook (opens as a draft) or Apple Mail (Message → Send Again), check it, and press Send.
    - Or, from Terminal on their own computer: `python3 send_email.py drawdown_report.eml --from <their address>`. The script shows the recipients, asks for confirmation, and prompts for an app password itself. Send `scripts/send_email.py` too if they ask for it.
-4. **Privacy of the link.** The artifact is private to the user. If the recipient is someone else, say they'll rely on the attached report unless the user shares the page.
 
 ### 8. Reply
 Keep the reply short:
